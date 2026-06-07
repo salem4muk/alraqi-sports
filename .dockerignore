@@ -1,0 +1,12 @@
+node_modules
+.next
+archive
+docs
+scripts
+*.log
+*.zip
+.env*
+.git
+.gitignore
+Dockerfile
+README.md

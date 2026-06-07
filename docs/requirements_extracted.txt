@@ -1,0 +1,366 @@
+pages: 9
+
+--- PAGE 1 ---
+Project: Alraqi Sports
+Build a professional mobile-first sports streaming web application called "Alraqi Sports".
+The application must be designed for Arabic users and optimized for Android mobile devices.
+Main Goal
+Create a modern sports platform that combines:
+Live matches
+Live TV channels
+Professional video player
+World Cup 2026 data
+Team information
+Group standings
+Stadium information
+The application should look like a premium sports streaming app.
+Technology Stack
+Use:
+HTML5
+CSS3
+Vanilla JavaScript ES6+
+HLS.js
+PWA
+Do NOT use:
+React
+Vue
+Angular
+jQuery
+Everything must run statically.
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+1
+
+--- PAGE 2 ---
+Language Support
+Primary Language:
+Arabic RTL
+Secondary Languages:
+English
+Persian
+Create a complete translation system.
+Structure:
+languages/ ├── ar .json ├── en.json └── fa.json
+Arabic must be default.
+Theme
+Dark Modern UI
+Colors:
+Background: #0B1020 Surface: #141C2F Primary: #7C3AED Accent: #A855F7 Success: #10B981 Danger:
+#EF4444
+Design Requirements:
+Modern glass effect
+Smooth animations
+Rounded corners
+Premium mobile app appearance
+Responsive layout
+Bottom Navigation
+Fixed bottom navigation:
+Home
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+1. 
+2
+
+--- PAGE 3 ---
+Matches
+Channels
+Standings
+More
+Use SVG icons.
+Home Screen
+Display:
+Featured Match Banner
+Live Matches Carousel
+Popular Channels
+World Cup News Section
+Quick Access Buttons
+Matches Screen
+Fetch data from:
+https://worldcup26.ir
+Required Endpoints:
+/get/games
+Display:
+Team Logos
+Team Names
+Match Time
+Match Date
+Match Status
+Stadium
+Tournament Stage
+Status Types:
+Upcoming
+Live
+Finished
+2. 
+3. 
+4. 
+5. 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+3
+
+--- PAGE 4 ---
+Live matches must display:
+LIVE badge
+Add:
+Watch Match button
+Teams Screen
+Fetch:
+/get/teams
+Display:
+Team Flag
+Team Name
+FIFA Code
+Group
+Create Team Details Page:
+Display:
+Flag
+Country
+Group
+Upcoming Matches
+Finished Matches
+Group Standings
+Fetch:
+/get/groups
+Display:
+Position
+Team
+Played
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+4
+
+--- PAGE 5 ---
+Wins
+Draws
+Losses
+Goals
+Points
+Create professional standings table.
+Stadiums Section
+Fetch:
+/get/stadiums
+Display:
+Stadium Name
+Country
+City
+Capacity
+Image Placeholder
+Create Stadium Details Page.
+Channels Screen
+Create IPTV Channel Management System.
+Each channel contains:
+Name
+Logo
+Category
+Stream URL
+Categories:
+Sports
+News
+Movies
+Kids
+Entertainment
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+5
+
+--- PAGE 6 ---
+Features:
+Search
+Filters
+Favorites
+Video Player
+Create professional player page.
+Support:
+HLS (.m3u8)
+MP4
+Use HLS.js.
+Features:
+Play
+Pause
+Seek
+Volume
+Fullscreen
+Picture In Picture
+Quality Selection
+Reload Stream
+Display:
+Current Match/Channel Name
+Current Server
+Stream Status
+Multi Server System
+Support:
+Server 1 Server 2 Server 3 Server 4
+Allow switching instantly.
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+6
+
+--- PAGE 7 ---
+Favorites
+Users can save:
+Teams
+Matches
+Channels
+Store locally using:
+localStorage
+Search System
+Global Search:
+Search across:
+Teams
+Matches
+Channels
+Stadiums
+Notifications
+Prepare architecture for:
+Match Reminder
+Match Started
+Live Match Alerts
+Use Service Worker notifications.
+PWA
+Create:
+manifest.json service-worker .js
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+7
+
+--- PAGE 8 ---
+Features:
+Install App
+Offline Mode
+Cache Assets
+Splash Screen
+Performance
+Requirements:
+Lazy Loading
+Code Splitting
+Optimized Images
+Fast Mobile Performance
+Target:
+Lighthouse Score > 90
+Folder Structure
+src/ │ ├── index.html ├── manifest.json ├── service-worker .js │ ├── css/ │ ├── main.css │
+├── player .css │ └── responsive.css │ ├── js/ │ ├── app.js │ ├── api.js │ ├── player .js │
+├── matches.js │ ├── teams.js │ ├── standings.js │ ├── channels.js │ ├── search.js │ └──
+i18n.js │ ├── languages/ │ ├── ar .json │ ├── en.json │ └── fa.json │ ├── assets/ │ ├──
+logos/ │ ├── icons/ │ ├── flags/ │ └── images/
+API Handling
+Create api.js.
+Implement:
+Error Handling
+Retry Mechanism
+Loading States
+Fallback Data
+If WorldCup2026 API fails:
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+8
+
+--- PAGE 9 ---
+Use local mock data automatically.
+The UI must never break.
+Code Quality
+Requirements:
+Clean Architecture
+Reusable Components
+Modular JavaScript
+Accessibility Support
+Detailed Comments
+Generate complete production-ready code.
+• 
+• 
+• 
+• 
+• 
+9

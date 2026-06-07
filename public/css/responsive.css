@@ -1,0 +1,294 @@
+@media (min-width: 760px) {
+  .app-shell {
+    width: min(100%, 1180px);
+    padding-inline: 24px;
+  }
+
+  .view.active {
+    display: block;
+  }
+
+  .channel-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stadium-grid,
+  .team-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bottom-nav {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 960px) {
+  .app-shell {
+    padding: 24px 42px 128px;
+  }
+
+  .app-header {
+    margin-bottom: 28px;
+  }
+
+  .view-head {
+    margin-bottom: 28px;
+  }
+
+  h1 {
+    font-size: clamp(42px, 5vw, 58px);
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .view.active {
+    width: 100%;
+  }
+
+  #homeView.view.active {
+    display: block;
+  }
+
+  #homeView .view-head,
+  #homeView .featured-match,
+  #homeView .global-search,
+  #homeView .search-results {
+    width: 100%;
+  }
+
+  #homeView .content-section {
+    min-width: 0;
+    margin-top: 34px;
+  }
+
+  .featured-match {
+    min-height: 0;
+  }
+
+  .worldcup-countdown {
+    min-height: 280px;
+  }
+
+  .horizontal-list {
+    direction: rtl;
+    grid-auto-flow: unset;
+    grid-auto-columns: unset;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  #matchesView .stack-list,
+  #channelsView .channel-grid {
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+  }
+
+  #channelsView .channel-grid {
+    align-items: stretch;
+  }
+
+  .channel-grid.compact {
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+  }
+
+  #homeView .channel-grid.compact {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+  }
+
+  .channel-card {
+    min-width: 0;
+    min-height: 190px;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .channel-card .card-head {
+    min-height: 62px;
+  }
+
+  .channel-card strong {
+    max-width: 100%;
+    font-size: 15px;
+  }
+
+  .channel-card .watch-mini {
+    min-height: 40px;
+  }
+
+  .fixture-card {
+    min-width: 0;
+    min-height: 360px;
+  }
+
+  .match-card-team strong {
+    max-width: min(240px, 100%);
+  }
+
+  .match-card-actions {
+    bottom: 64px;
+  }
+
+  #standingsView.view.active {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  #standingsView .view-head {
+    grid-column: 1 / -1;
+  }
+
+  #standingsView .standings-wrap {
+    min-width: 0;
+  }
+
+  #standingsView .content-section {
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  #standingsView .stadium-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #moreView .team-grid {
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+  }
+
+  .news-card {
+    max-width: none;
+  }
+
+  .bottom-nav {
+    width: min(640px, calc(100% - 84px));
+    height: 90px;
+    padding: 8px;
+    border-radius: 30px;
+  }
+
+  .nav-item {
+    height: 72px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-shell {
+    width: min(100%, 1280px);
+  }
+
+  #matchesView .stack-list,
+  #channelsView .channel-grid {
+    grid-template-columns: repeat(4, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell {
+    padding-inline: 12px;
+  }
+
+  .match-hero {
+    min-height: 196px;
+    padding: 15px;
+  }
+
+  .versus {
+    grid-template-columns: 1fr 62px 1fr;
+  }
+
+  .team-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 18px;
+  }
+
+  .score-box {
+    min-height: 58px;
+    font-size: 22px;
+  }
+
+  .channel-grid.compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .channel-grid.compact .channel-card {
+    min-height: 116px;
+    padding: 10px;
+  }
+
+  .channel-grid.compact .channel-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
+
+  .channel-grid.compact .bein-logo {
+    width: 72px;
+    height: 44px;
+    padding: 6px 8px;
+    border-radius: 15px;
+  }
+
+  .channel-grid.compact .bein-word {
+    font-size: 14px;
+  }
+
+  .channel-grid.compact .bein-sport {
+    font-size: 8px;
+  }
+
+  .channel-grid.compact strong,
+  .quick-action {
+    font-size: 11px;
+  }
+
+  .worldcup-countdown {
+    min-height: 300px;
+    padding: 24px 14px;
+  }
+
+  .worldcup-countdown h2 {
+    font-size: 34px;
+  }
+
+  .countdown-grid {
+    gap: 8px;
+  }
+
+  .countdown-unit {
+    min-height: 88px;
+  }
+
+  .countdown-unit strong {
+    font-size: 27px;
+  }
+
+  .standing-row {
+    grid-template-columns: 28px minmax(78px, 1fr) repeat(4, 28px) 45px 30px;
+    padding-inline: 9px;
+  }
+
+  .player-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

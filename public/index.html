@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0B1020" />
+    <meta name="description" content="Alraqi Sports - live sports streaming, World Cup 2026 matches, teams, standings, stadiums, and IPTV channels." />
+    <title>Alraqi Sports</title>
+    <link rel="manifest" href="/manifest.json?v=next-21" />
+    <link rel="icon" href="/assets/icons/favicon-32.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/main.css?v=next-21" />
+    <link rel="stylesheet" href="/css/player.css?v=next-21" />
+    <link rel="stylesheet" href="/css/responsive.css?v=next-21" />
+    <script defer src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+    <script type="module" src="/js/app.js?v=next-21"></script>
+  </head>
+  <body>
+    <noscript>Alraqi Sports يحتاج إلى JavaScript للعمل.</noscript>
+
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">
+            <img src="/assets/icons/app-icon-192.png" alt="" />
+          </span>
+          <div>
+            <strong data-i18n="brandName">الراقي سبورت</strong>
+            <small data-i18n="brandSubtitle">كأس العالم 2026 مباشر</small>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content" id="mainContent">
+        <section class="view active" id="homeView" data-view="home" aria-labelledby="homeTitle">
+          <div class="view-head">
+            <div>
+              <h1 id="homeTitle" data-i18n="homeTitle">المباريات والقنوات في مكان واحد</h1>
+            </div>
+            <button class="install-button" id="installButton" type="button" hidden data-i18n="install">تثبيت</button>
+          </div>
+
+          <section class="featured-match" id="featuredMatch" aria-live="polite"></section>
+
+          <form class="global-search" id="globalSearch" role="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <input id="searchInput" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن فريق، مباراة، قناة، ملعب..." />
+          </form>
+          <section class="search-results" id="searchResults" hidden></section>
+
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="liveMatches">مباريات مباشرة</h2>
+            </div>
+            <div class="horizontal-list" id="liveMatchesList"></div>
+          </section>
+
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="popularChannels">قنوات شائعة</h2>
+            </div>
+            <div class="channel-grid compact" id="popularChannels"></div>
+          </section>
+
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="quickAccess">وصول سريع</h2>
+            </div>
+            <div class="quick-grid">
+              <button class="quick-action" type="button" data-go="matches"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3" /><path d="M8 2v4" /><path d="M16 2v4" /><path d="M3 10h18" /><path d="M8 15h.01" /><path d="M12 15h.01" /><path d="M16 15h.01" /></svg><span data-i18n="matches">المباريات</span></button>
+              <button class="quick-action" type="button" data-go="channels"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" /><path d="M8 22h8" /><path d="m10 10 5 3-5 3V10Z" /></svg><span data-i18n="channels">القنوات</span></button>
+              <button class="quick-action" type="button" data-go="standings"><svg viewBox="0 0 24 24"><path d="M6 20V10" /><path d="M12 20V4" /><path d="M18 20v-7" /></svg><span data-i18n="standings">الترتيب</span></button>
+              <button class="quick-action" type="button" data-go="more"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg><span data-i18n="teams">الفرق</span></button>
+            </div>
+          </section>
+
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="worldCupNews">أخبار كأس العالم</h2>
+            </div>
+            <div class="news-card">
+              <strong data-i18n="newsTitle">تحديثات كأس العالم 2026</strong>
+              <p data-i18n="newsBody">تابع الفرق، الملاعب، المجموعات، والمباريات المباشرة من واجهة واحدة سريعة.</p>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="matchesView" data-view="matches" aria-labelledby="matchesTitle">
+          <div class="view-head">
+            <div>
+              <h1 id="matchesTitle" data-i18n="matches">المباريات</h1>
+            </div>
+          </div>
+          <div class="filter-row" id="matchFilters"></div>
+          <div class="stack-list" id="matchesList"></div>
+        </section>
+
+        <section class="view" id="channelsView" data-view="channels" aria-labelledby="channelsTitle">
+          <div class="view-head">
+            <div>
+              <h1 id="channelsTitle" data-i18n="channels">القنوات</h1>
+            </div>
+          </div>
+          <div class="filter-row" id="channelFilters"></div>
+          <div class="channel-grid" id="channelsList"></div>
+        </section>
+
+        <section class="view" id="standingsView" data-view="standings" aria-labelledby="standingsTitle">
+          <div class="view-head">
+            <div>
+              <h1 id="standingsTitle" data-i18n="standings">الترتيب</h1>
+            </div>
+          </div>
+          <div class="standings-wrap" id="standingsList"></div>
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="stadiums">الملاعب</h2>
+            </div>
+            <div class="stadium-grid" id="stadiumsList"></div>
+          </section>
+        </section>
+
+        <section class="view" id="moreView" data-view="more" aria-labelledby="moreTitle">
+          <div class="view-head">
+            <div>
+              <h1 id="moreTitle" data-i18n="teams">الفرق</h1>
+            </div>
+          </div>
+          <section class="content-section">
+            <div class="section-title">
+              <h2 data-i18n="teams">الفرق</h2>
+            </div>
+            <div class="team-grid" id="teamsList"></div>
+          </section>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Main navigation">
+        <button class="nav-item active" type="button" data-go="home">
+          <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z" /></svg>
+          <span data-i18n="home">الرئيسية</span>
+        </button>
+        <button class="nav-item" type="button" data-go="matches">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3" /><path d="M8 2v4" /><path d="M16 2v4" /><path d="M3 10h18" /><path d="M8 15h.01" /><path d="M12 15h.01" /><path d="M16 15h.01" /></svg>
+          <span data-i18n="matches">المباريات</span>
+        </button>
+        <button class="nav-item" type="button" data-go="channels">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" /><path d="M8 22h8" /><path d="m10 10 5 3-5 3V10Z" /></svg>
+          <span data-i18n="channels">القنوات</span>
+        </button>
+        <button class="nav-item" type="button" data-go="standings">
+          <svg viewBox="0 0 24 24"><path d="M6 20V10" /><path d="M12 20V4" /><path d="M18 20v-7" /></svg>
+          <span data-i18n="standings">الترتيب</span>
+        </button>
+        <button class="nav-item" type="button" data-go="more">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+          <span data-i18n="teams">الفرق</span>
+        </button>
+      </nav>
+    </div>
+
+    <section class="player-sheet" id="playerSheet" aria-hidden="true">
+      <div class="player-panel" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
+        <div class="player-top">
+          <div>
+            <span class="stream-state" id="streamState">جاهز</span>
+            <h2 id="playerTitle">Alraqi Sports Player</h2>
+            <p id="playerMeta">Server 1</p>
+          </div>
+          <button class="icon-button" id="closePlayer" type="button" aria-label="إغلاق">
+            <svg viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+          </button>
+        </div>
+        <video id="videoPlayer" playsinline controls preload="metadata"></video>
+        <div class="server-row" id="serverRow"></div>
+        <div class="player-actions">
+          <button type="button" id="reloadStream" data-i18n="reloadStream">إعادة التحميل</button>
+          <button type="button" id="pipButton" data-i18n="pictureInPicture">صورة داخل صورة</button>
+          <button type="button" id="fullscreenButton" data-i18n="fullscreen">ملء الشاشة</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
+
+
+
+
+

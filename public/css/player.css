@@ -1,0 +1,113 @@
+.player-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  align-items: end;
+  padding: 16px;
+  background: rgba(3, 7, 18, 0.72);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.player-sheet.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.player-panel {
+  width: min(100%, 720px);
+  max-height: calc(100vh - 32px);
+  margin: 0 auto;
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(124, 58, 237, 0.18), transparent 28%),
+    rgba(11, 16, 32, 0.96);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+  transform: translateY(18px);
+  transition: transform 220ms ease;
+}
+
+.player-sheet.open .player-panel {
+  transform: translateY(0);
+}
+
+.player-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.player-top h2 {
+  margin: 6px 0 4px;
+  font-size: 20px;
+}
+
+.player-top p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.stream-state {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #bbf7d0;
+  background: rgba(16, 185, 129, 0.14);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+#videoPlayer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #020617;
+}
+
+.server-row {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.server-row button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+}
+
+.server-row button.active {
+  color: var(--text);
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.14);
+}
+
+.player-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.player-actions button {
+  min-height: 42px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 800;
+}

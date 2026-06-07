@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Alraqi Sports icon">
+  <defs>
+    <linearGradient id="bg" x1="74" y1="42" x2="436" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset=".48" stop-color="#12365F"/>
+      <stop offset="1" stop-color="#0B1020"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="134" y1="142" x2="388" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#020617" flood-opacity=".38"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="132" fill="url(#bg)"/>
+  <path d="M82 356c50 36 105 54 166 54 75 0 133-26 180-78" fill="none" stroke="#22D3EE" stroke-width="24" stroke-linecap="round" opacity=".42"/>
+  <g filter="url(#soft)">
+    <circle cx="256" cy="245" r="112" fill="rgba(11,16,32,.56)" stroke="rgba(255,255,255,.18)" stroke-width="10"/>
+    <path d="M162 246c0-54 42-96 96-96s96 42 96 96" fill="none" stroke="url(#pulse)" stroke-width="28" stroke-linecap="round"/>
+    <path d="M191 302h114" fill="none" stroke="#F8FAFC" stroke-width="28" stroke-linecap="round"/>
+    <path d="m210 216 48 48 48-48" fill="none" stroke="#A855F7" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <circle cx="368" cy="138" r="42" fill="#10B981"/>
+  <path d="M350 138h36M368 120v36" stroke="#ECFEFF" stroke-width="14" stroke-linecap="round"/>
+</svg>

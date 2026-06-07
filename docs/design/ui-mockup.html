@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alraqi Sports UI Mockup</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --surface: #141c2f;
+        --surface-2: #1b2841;
+        --primary: #7c3aed;
+        --accent: #a855f7;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --cyan: #22d3ee;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --line: rgba(255, 255, 255, 0.1);
+        --glass: rgba(20, 28, 47, 0.74);
+        font-family:
+          "Tajawal",
+          "Segoe UI",
+          Arial,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.18), transparent 30%),
+          linear-gradient(140deg, #090d19 0%, #10172a 52%, #0b1020 100%);
+        color: var(--text);
+      }
+
+      .stage {
+        width: min(100%, 1180px);
+        display: grid;
+        grid-template-columns: 380px minmax(520px, 1fr);
+        gap: 34px;
+        align-items: center;
+        padding: 30px;
+      }
+
+      .phone {
+        width: 380px;
+        height: 820px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 38px;
+        background:
+          linear-gradient(180deg, rgba(124, 58, 237, 0.16), transparent 22%),
+          var(--bg);
+        box-shadow:
+          0 32px 90px rgba(0, 0, 0, 0.45),
+          inset 0 0 0 8px rgba(255, 255, 255, 0.035);
+        position: relative;
+      }
+
+      .screen {
+        height: 100%;
+        overflow: hidden;
+        padding: 24px 18px 92px;
+        position: relative;
+      }
+
+      .screen::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        background-size: 30px 30px;
+        mask-image: linear-gradient(to bottom, black, transparent 64%);
+        pointer-events: none;
+      }
+
+      .topbar,
+      .hero,
+      .search,
+      .section,
+      .bottom-nav {
+        position: relative;
+        z-index: 1;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(135deg, var(--primary), var(--cyan)),
+          #1f2937;
+        box-shadow: 0 14px 26px rgba(124, 58, 237, 0.28);
+      }
+
+      .brand-title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .brand-subtitle {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .icon-button {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+      }
+
+      .hero {
+        min-height: 188px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 28px;
+        padding: 18px;
+        background:
+          linear-gradient(135deg, rgba(124, 58, 237, 0.7), rgba(20, 184, 166, 0.16)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03)),
+          var(--surface);
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.32);
+      }
+
+      .hero-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .live-badge,
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: rgba(239, 68, 68, 0.18);
+        color: #fecaca;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--danger);
+        box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.17);
+      }
+
+      .stage-name {
+        color: rgba(248, 250, 252, 0.78);
+        font-size: 12px;
+      }
+
+      .teams {
+        display: grid;
+        grid-template-columns: 1fr 64px 1fr;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+      }
+
+      .team {
+        min-width: 0;
+      }
+
+      .flag {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 8px;
+        display: grid;
+        place-items: center;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.13);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: 25px;
+      }
+
+      .team-name {
+        font-size: 14px;
+        font-weight: 800;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .score {
+        min-height: 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 22px;
+        background: rgba(11, 16, 32, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        font-size: 26px;
+        font-weight: 900;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr 46px;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .watch-button {
+        min-height: 46px;
+        border: 0;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--success), #14b8a6);
+        color: #042f2e;
+        font: inherit;
+        font-weight: 900;
+        box-shadow: 0 16px 24px rgba(16, 185, 129, 0.22);
+      }
+
+      .search {
+        height: 46px;
+        margin: 13px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.065);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .section {
+        margin-top: 12px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .section-title span {
+        color: var(--cyan);
+        font-size: 12px;
+      }
+
+      .match-list,
+      .channel-row,
+      .quick-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .match-card {
+        min-height: 66px;
+        display: grid;
+        grid-template-columns: 54px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 11px;
+        border-radius: 20px;
+        background: var(--glass);
+        border: 1px solid var(--line);
+        backdrop-filter: blur(18px);
+      }
+
+      .mini-flags {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+
+      .mini-flag {
+        width: 26px;
+        height: 26px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 15px;
+      }
+
+      .match-main strong,
+      .channel strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .match-main small,
+      .channel small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .status-badge {
+        background: rgba(16, 185, 129, 0.16);
+        color: #bbf7d0;
+        white-space: nowrap;
+      }
+
+      .channel-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .channel {
+        min-height: 78px;
+        padding: 10px;
+        border-radius: 21px;
+        background: rgba(255, 255, 255, 0.055);
+        border: 1px solid var(--line);
+      }
+
+      .channel-logo {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 7px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.9), rgba(245, 158, 11, 0.82));
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .quick {
+        min-height: 64px;
+        display: grid;
+        place-items: center;
+        gap: 4px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.055);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .bottom-nav {
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        bottom: 18px;
+        height: 66px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+        align-items: center;
+        padding: 6px;
+        border-radius: 24px;
+        background: rgba(12, 18, 33, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(24px);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+      }
+
+      .nav-item {
+        min-width: 0;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        gap: 2px;
+        border-radius: 18px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .nav-item.active {
+        background: rgba(124, 58, 237, 0.22);
+        color: var(--text);
+      }
+
+      .nav-item svg,
+      .icon-button svg,
+      .search svg,
+      .quick svg,
+      .brand-mark svg,
+      .channel-logo svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .board {
+        min-height: 690px;
+        padding: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 28px;
+        background: rgba(11, 16, 32, 0.58);
+        backdrop-filter: blur(22px);
+      }
+
+      .board h1 {
+        margin: 0 0 10px;
+        font-size: 42px;
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .board p {
+        max-width: 600px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      .design-system {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 26px;
+      }
+
+      .tile {
+        min-height: 134px;
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.055);
+        border: 1px solid var(--line);
+      }
+
+      .tile h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      .tile p {
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .palette {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .swatch {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .flow-step {
+        min-height: 88px;
+        padding: 12px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .flow-step strong {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
+        margin-bottom: 5px;
+      }
+
+      @media (max-width: 900px) {
+        .stage {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          padding: 10px;
+        }
+
+        .phone {
+          width: min(380px, calc(100vw - 20px));
+        }
+
+        .board {
+          width: min(100%, 380px);
+          min-height: 0;
+          padding: 22px;
+        }
+
+        .board h1 {
+          font-size: 30px;
+        }
+
+        .design-system,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="stage">
+      <section class="phone" aria-label="Alraqi Sports mobile home screen">
+        <div class="screen">
+          <header class="topbar">
+            <div class="brand">
+              <div class="brand-mark">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12a7 7 0 0 1 14 0" />
+                  <path d="M7 17h10" />
+                  <path d="M9 9l3 3 3-3" />
+                </svg>
+              </div>
+              <div>
+                <h1 class="brand-title">العراقي سبورت</h1>
+                <div class="brand-subtitle">كأس العالم 2026 مباشر</div>
+              </div>
+            </div>
+            <button class="icon-button" aria-label="التنبيهات">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                <path d="M10 21h4" />
+              </svg>
+            </button>
+          </header>
+
+          <section class="hero">
+            <div class="hero-head">
+              <span class="live-badge"><span class="live-dot"></span> مباشر الآن</span>
+              <span class="stage-name">دور المجموعات · ملعب ميامي</span>
+            </div>
+            <div class="teams">
+              <div class="team">
+                <div class="flag">🇮🇶</div>
+                <div class="team-name">العراق</div>
+              </div>
+              <div class="score">1 - 2</div>
+              <div class="team">
+                <div class="flag">🇯🇵</div>
+                <div class="team-name">اليابان</div>
+              </div>
+            </div>
+            <div class="hero-actions">
+              <button class="watch-button">مشاهدة المباراة</button>
+              <button class="icon-button" aria-label="إضافة للمفضلة">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21s-7-4.3-9-9.4C1.2 7.4 3.8 4 7.3 4c2 0 3.2 1 4.7 2.8C13.5 5 14.7 4 16.7 4c3.5 0 6.1 3.4 4.3 7.6C19 16.7 12 21 12 21Z" />
+                </svg>
+              </button>
+            </div>
+          </section>
+
+          <div class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            ابحث عن فريق، مباراة، قناة، ملعب...
+          </div>
+
+          <section class="section">
+            <div class="section-title">
+              <h2>مباريات اليوم</h2>
+              <span>عرض الكل</span>
+            </div>
+            <div class="match-list">
+              <article class="match-card">
+                <div class="mini-flags"><span class="mini-flag">🇦🇷</span><span class="mini-flag">🇲🇽</span></div>
+                <div class="match-main">
+                  <strong>الأرجنتين ضد المكسيك</strong>
+                  <small>22:00 · ملعب أتلانتا</small>
+                </div>
+                <span class="status-badge">قريبًا</span>
+              </article>
+              <article class="match-card">
+                <div class="mini-flags"><span class="mini-flag">🇧🇷</span><span class="mini-flag">🇪🇸</span></div>
+                <div class="match-main">
+                  <strong>البرازيل ضد إسبانيا</strong>
+                  <small>انتهت · المجموعة ج</small>
+                </div>
+                <span class="status-badge">2 - 2</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="section-title">
+              <h2>قنوات شائعة</h2>
+              <span>إدارة IPTV</span>
+            </div>
+            <div class="channel-row">
+              <article class="channel">
+                <div class="channel-logo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14v10H5z" /><path d="m9 21 3-4 3 4" /></svg>
+                </div>
+                <strong>Sports 1</strong>
+                <small>HLS · HD</small>
+              </article>
+              <article class="channel">
+                <div class="channel-logo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                </div>
+                <strong>World Cup</strong>
+                <small>Server 2</small>
+              </article>
+              <article class="channel">
+                <div class="channel-logo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></svg>
+                </div>
+                <strong>News Live</strong>
+                <small>مفضلة</small>
+              </article>
+            </div>
+          </section>
+
+          <nav class="bottom-nav" aria-label="التنقل الرئيسي">
+            <div class="nav-item active">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z" /></svg>
+              الرئيسية
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z" /><path d="M8 22h8" /></svg>
+              المباريات
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              القنوات
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V10" /><path d="M12 20V4" /><path d="M18 20v-7" /></svg>
+              الترتيب
+            </div>
+            <div class="nav-item">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="M5 6h14" /><path d="M5 18h14" /></svg>
+              المزيد
+            </div>
+          </nav>
+        </div>
+      </section>
+
+      <aside class="board">
+        <h1>تصميم واجهة <bdi dir="ltr">Alraqi Sports</bdi></h1>
+        <p>
+          نموذج بصري موبايل أولًا لتطبيق بث رياضي عربي، يجمع المباراة المباشرة، قنوات IPTV، البحث العام،
+          الترتيب، والتنبيهات في واجهة داكنة زجاجية سريعة القراءة على أجهزة أندرويد.
+        </p>
+        <div class="palette" aria-label="Color palette">
+          <span class="swatch" style="background: #0b1020"></span>
+          <span class="swatch" style="background: #141c2f"></span>
+          <span class="swatch" style="background: #7c3aed"></span>
+          <span class="swatch" style="background: #10b981"></span>
+          <span class="swatch" style="background: #f59e0b"></span>
+          <span class="swatch" style="background: #22d3ee"></span>
+        </div>
+        <div class="design-system">
+          <div class="tile">
+            <h3>الطبقات</h3>
+            <p>خلفية داكنة، بطاقات زجاجية، وحواف واضحة حتى لا يضيع المحتوى الرياضي أثناء الحركة.</p>
+          </div>
+          <div class="tile">
+            <h3>المشاهدة</h3>
+            <p>المباراة الحية هي مركز الشاشة مع حالة LIVE وزر مشاهدة كبير ومفضلة فورية.</p>
+          </div>
+          <div class="tile">
+            <h3>الملاحة</h3>
+            <p>تنقل سفلي ثابت بخمسة أقسام كما في المتطلبات: الرئيسية، المباريات، القنوات، الترتيب، المزيد.</p>
+          </div>
+          <div class="tile">
+            <h3>البيانات</h3>
+            <p>المكونات جاهزة لعرض الفرق، المواعيد، القنوات، الملاعب، والجداول من API أو بيانات احتياطية.</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><strong>1. اكتشاف</strong>مباراة مميزة وقنوات شائعة في أول شاشة.</div>
+          <div class="flow-step"><strong>2. مشاهدة</strong>انتقال إلى مشغل يدعم HLS وMP4 وتبديل السيرفرات.</div>
+          <div class="flow-step"><strong>3. متابعة</strong>مفضلة وتنبيهات للمباريات الحية والقادمة.</div>
+          <div class="flow-step"><strong>4. تصفح</strong>فرق، ملاعب، وترتيب كأس العالم 2026.</div>
+        </div>
+      </aside>
+    </main>
+  </body>
+</html>
