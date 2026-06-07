@@ -217,6 +217,31 @@
     font-size: 22px;
   }
 
+  .match-date-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .timeline-match-card {
+    grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr);
+    min-height: 116px;
+    padding: 14px;
+  }
+
+  .timeline-team strong {
+    font-size: 14px;
+  }
+
+  .timeline-flag {
+    width: 46px;
+    height: 32px;
+  }
+
+  .score-dash {
+    font-size: 22px;
+  }
+
   .channel-grid.compact {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -281,6 +306,10 @@
   .player-actions {
     grid-template-columns: 1fr;
   }
+}
+
+#matchesView .stack-list {
+  grid-template-columns: 1fr;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -122,6 +122,26 @@ function teamName(catalog, id, englishName, fallback) {
   return team?.names?.[language] || team?.names?.ar || fallback || englishName;
 }
 
+function isPlaceholderTeamName(value = "") {
+  return ["home", "away", "tbd", "to be determined"].includes(String(value).trim().toLowerCase());
+}
+
+function displayTeamName(value, fallback = "يتحدد لاحقًا") {
+  const name = String(value || "").trim();
+  return !name || isPlaceholderTeamName(name) ? fallback : name;
+}
+
+function cleanTeamCode(value, fallback = "") {
+  const code = String(value || "").trim();
+  if (!code || code === "0" || isPlaceholderTeamName(code)) return fallback;
+  return code;
+}
+
+function cleanFlag(value) {
+  const flag = String(value || "").trim();
+  return flag === "0" ? "" : flag;
+}
+
 function parseBoolean(value) {
   return String(value).toLowerCase() === "true";
 }
@@ -177,19 +197,23 @@ function normalizeGame(game, catalog, watchLinks = new Map()) {
   const finished = parseBoolean(game.finished);
   const elapsed = String(game.time_elapsed || "").toLowerCase();
   const status = game.status || (finished ? "finished" : elapsed && elapsed !== "notstarted" ? "live" : "upcoming");
-  const homeName = teamName(catalog, game.home_team_id, homeEnglish, game.home_team_name_ar || game.home_team_name_fa || game.homeTeam);
-  const awayName = teamName(catalog, game.away_team_id, awayEnglish, game.away_team_name_ar || game.away_team_name_fa || game.awayTeam);
+  const rawHomeName = teamName(catalog, game.home_team_id, homeEnglish, game.home_team_name_ar || game.home_team_name_fa || game.homeTeam);
+  const rawAwayName = teamName(catalog, game.away_team_id, awayEnglish, game.away_team_name_ar || game.away_team_name_fa || game.awayTeam);
+  const homeName = displayTeamName(rawHomeName);
+  const awayName = displayTeamName(rawAwayName);
   const id = `game-${game.id || game._id || `${homeName}-${awayName}`}`;
   const servers = linkServers(watchLinks.get(id) || watchLinks.get(String(game.id || "")) || []);
+  const fallbackHomeCode = isPlaceholderTeamName(rawHomeName) ? "" : teamCodeFallback(homeEnglish || homeName, game.home_team_id);
+  const fallbackAwayCode = isPlaceholderTeamName(rawAwayName) ? "" : teamCodeFallback(awayEnglish || awayName, game.away_team_id);
 
   return {
     id,
-    homeTeam: homeName || "Home",
-    awayTeam: awayName || "Away",
-    homeCode: homeInfo?.fifaCode || game.home_team_code || game.homeCode || teamCodeFallback(homeEnglish || homeName, game.home_team_id),
-    awayCode: awayInfo?.fifaCode || game.away_team_code || game.awayCode || teamCodeFallback(awayEnglish || awayName, game.away_team_id),
-    homeFlag: homeInfo?.flag || game.home_flag || game.homeFlag || "",
-    awayFlag: awayInfo?.flag || game.away_flag || game.awayFlag || "",
+    homeTeam: homeName,
+    awayTeam: awayName,
+    homeCode: cleanTeamCode(homeInfo?.fifaCode || game.home_team_code || game.homeCode, fallbackHomeCode),
+    awayCode: cleanTeamCode(awayInfo?.fifaCode || game.away_team_code || game.awayCode, fallbackAwayCode),
+    homeFlag: cleanFlag(homeInfo?.flag || game.home_flag || game.homeFlag || ""),
+    awayFlag: cleanFlag(awayInfo?.flag || game.away_flag || game.awayFlag || ""),
     homeScore: Number.parseInt(game.home_score ?? game.homeScore, 10),
     awayScore: Number.parseInt(game.away_score ?? game.awayScore, 10),
     date: game.date || localDate.date,

@@ -1,7 +1,7 @@
-import { getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-24";
-import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-24";
+import { getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-27";
+import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-25";
 import { loadLanguage, t } from "./i18n.js?v=next-21";
-import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero } from "./matches.js?v=next-23";
+import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero, renderMatchTimeline } from "./matches.js?v=next-29";
 import { openPlayer, initPlayer } from "./player.js?v=next-21";
 import { globalSearch } from "./search.js?v=next-21";
 import { renderStadiumCard, renderStandings } from "./standings.js?v=next-21";
@@ -114,7 +114,7 @@ function startCountdownTicker() {
 function renderMatches() {
   byId("matchFilters").innerHTML = createMatchFilters(state.matchFilter);
   const matches = filterMatches(state.data.games, state.matchFilter);
-  byId("matchesList").innerHTML = matches.length ? matches.map(renderMatchCard).join("") : `<div class="empty-state">${t("noResults")}</div>`;
+  byId("matchesList").innerHTML = matches.length ? renderMatchTimeline(matches) : `<div class="empty-state">${t("noResults")}</div>`;
 }
 
 function renderChannels() {

@@ -14,6 +14,7 @@ function renderChannelLogo(channel) {
 }
 
 export function renderChannelCard(channel) {
+  const canWatch = Boolean(channel.streamUrl || channel.servers?.length);
   return `
     <article class="channel-card">
       <div class="card-head">
@@ -23,7 +24,7 @@ export function renderChannelCard(channel) {
         <strong>${channel.name}</strong>
         <small class="muted">${t(channel.category, channel.category)}</small>
       </div>
-      <button class="watch-mini" type="button" data-play="channel" data-id="${channel.id}">${t("watch")}</button>
+      ${canWatch ? `<button class="watch-mini" type="button" data-play="channel" data-id="${channel.id}">${t("watch")}</button>` : `<span class="watch-mini disabled">لا يوجد رابط</span>`}
     </article>
   `;
 }

@@ -99,14 +99,18 @@ function renderStats() {
 function renderMatchSelects() {
   const query = state.matchSearch.trim().toLowerCase();
   const selectedGame = state.matches.find((game) => matchId(game) === state.selectedMatchId);
-  const matches = (query ? state.matches.filter((game) => matchSearchText(game).includes(query)) : state.matches).slice(0, 12);
+  const filteredMatches = query ? state.matches.filter((game) => matchSearchText(game).includes(query)) : state.matches;
+  const matches = filteredMatches.slice(0, 50);
   byId("matchSelect").value = state.selectedMatchId;
   byId("selectedMatch").textContent = selectedGame ? `المحدد: ${matchLabel(selectedGame)}` : "اختر مباراة من القائمة";
+  byId("matchCount").textContent = filteredMatches.length
+    ? `يعرض ${matches.length} من ${filteredMatches.length} مباراة${filteredMatches.length > matches.length ? " - استخدم البحث للوصول للباقي" : ""}`
+    : "لا توجد مباريات مطابقة";
   byId("matchPickerList").innerHTML = matches.length
     ? matches.map((game) => renderMatchChoice(game, matchId(game) === state.selectedMatchId)).join("")
     : `<div class="empty compact-empty">لا توجد مباريات مطابقة</div>`;
   byId("matchLinkChannel").innerHTML = `<option value="">بدون قناة</option>${activeChannels()
-    .map((channel) => `<option value="${channel.id}">${channel.name}</option>`)
+    .map((channel) => `<option value="${channel.id}">${channel.name}${channel.category ? ` - ${channel.category}` : ""}</option>`)
     .join("")}`;
 }
 

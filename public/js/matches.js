@@ -27,10 +27,14 @@ function matchResult(match) {
 }
 
 function flagContent(value, label) {
+  const cleanValue = String(value || "").trim();
+  const cleanLabel = String(label || "").trim();
   if (typeof value === "string" && /^https?:\/\//.test(value)) {
     return `<img src="${value}" alt="${label}" loading="lazy" />`;
   }
-  return value || label;
+  if (cleanValue && cleanValue !== "0") return cleanValue;
+  if (cleanLabel && cleanLabel !== "0") return cleanLabel;
+  return "TBD";
 }
 
 function groupLabel(match) {
@@ -40,6 +44,77 @@ function groupLabel(match) {
 function matchdayLabel(match) {
   const matchday = String(match.stage || "").match(/Matchday\s+(\d+)/i)?.[1];
   return matchday ? `الجولة ${matchday}` : t(statusLabels[match.status], match.status);
+}
+
+function stageLabel(match) {
+  const matchday = String(match.stage || "").match(/Matchday\s+(\d+)/i)?.[1];
+  if (matchday) return `دور المجموعات - الجولة ${matchday}`;
+  if (String(match.stage || "").toLowerCase().includes("group")) return "دور المجموعات";
+  return match.stage || "كأس العالم";
+}
+
+function formatDateHeader(date = "") {
+  if (!date) return "موعد غير محدد";
+  const parsed = new Date(`${date}T12:00:00`);
+  if (Number.isNaN(parsed.getTime())) return date;
+  const weekday = new Intl.DateTimeFormat("ar", { weekday: "long" }).format(parsed);
+  return `${weekday} ${date}`;
+}
+
+function groupKey(match) {
+  return `${match.date || "unknown"}__${stageLabel(match)}`;
+}
+
+function renderTimelineMatch(match) {
+  const canWatch = match.status === "live" && match.hasWatchLinks;
+  return `
+    <article class="timeline-match-card">
+      <div class="timeline-team">
+        <span class="timeline-flag">${flagContent(match.homeFlag, match.homeCode)}</span>
+        <strong>${match.homeTeam}</strong>
+      </div>
+      <div class="timeline-score">
+        <span class="score-dash">${match.status === "upcoming" ? "—" : matchResult(match)}</span>
+        <small>${match.status === "upcoming" ? formatTime12(match.time) : t(statusLabels[match.status], match.status)}</small>
+      </div>
+      <div class="timeline-team">
+        <span class="timeline-flag">${flagContent(match.awayFlag, match.awayCode)}</span>
+        <strong>${match.awayTeam}</strong>
+      </div>
+      ${canWatch ? `<button class="watch-mini timeline-watch" type="button" data-play="match" data-id="${match.id}">${t("watch")}</button>` : ""}
+    </article>
+  `;
+}
+
+export function renderMatchTimeline(matches = []) {
+  const sections = new Map();
+  matches.forEach((match) => {
+    const key = groupKey(match);
+    if (!sections.has(key)) {
+      sections.set(key, {
+        date: match.date,
+        stage: stageLabel(match),
+        matches: []
+      });
+    }
+    sections.get(key).matches.push(match);
+  });
+
+  return [...sections.values()]
+    .map(
+      (section) => `
+        <section class="match-date-section">
+          <header class="match-date-head">
+            <strong>${section.stage}</strong>
+            <span>${formatDateHeader(section.date)}</span>
+          </header>
+          <div class="timeline-match-list">
+            ${section.matches.map(renderTimelineMatch).join("")}
+          </div>
+        </section>
+      `
+    )
+    .join("");
 }
 
 export function renderMatchHero(match) {

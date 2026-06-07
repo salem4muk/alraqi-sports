@@ -544,6 +544,13 @@ label span {
   margin-top: 8px;
 }
 
+.match-count {
+  color: var(--muted);
+  display: block;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
 .compact-empty {
   padding: 12px;
 }

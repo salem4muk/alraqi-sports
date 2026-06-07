@@ -671,8 +671,10 @@ h2 {
 
 .match-card-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   justify-items: center;
-  gap: 9px;
+  gap: 12px;
   text-align: center;
 }
 
@@ -720,14 +722,14 @@ h2 {
 
 .match-vs {
   color: rgba(248, 250, 252, 0.68);
-  font-size: 27px;
+  font-size: 18px;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
-  transform: rotate(90deg);
 }
 
 .match-card-score {
+  grid-column: 1 / -1;
   min-width: 110px;
   display: inline-flex;
   align-items: center;
@@ -774,6 +776,134 @@ h2 {
 
 .match-card-actions > * {
   pointer-events: auto;
+}
+
+.match-date-section {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.match-date-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 4px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.match-date-head strong {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.timeline-match-list {
+  display: grid;
+  gap: 12px;
+}
+
+.timeline-match-card {
+  position: relative;
+  min-height: 132px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+    radial-gradient(circle at 16% 50%, rgba(34, 211, 238, 0.12), transparent 36%),
+    radial-gradient(circle at 84% 50%, rgba(124, 58, 237, 0.16), transparent 36%),
+    var(--glass);
+  padding: 18px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+}
+
+.timeline-match-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent),
+    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.07), transparent 42%);
+  pointer-events: none;
+}
+
+.timeline-team,
+.timeline-score {
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-team {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-align: center;
+}
+
+.timeline-team strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline-flag {
+  width: 58px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(34, 211, 238, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(34, 211, 238, 0.08)),
+    rgba(255, 255, 255, 0.07);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(34, 211, 238, 0.08);
+}
+
+.timeline-flag img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.timeline-score {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.score-dash {
+  color: var(--cyan);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
+}
+
+.timeline-watch {
+  position: absolute;
+  inset-inline-start: 14px;
+  bottom: 14px;
+  z-index: 2;
 }
 
 .mini-flags {
