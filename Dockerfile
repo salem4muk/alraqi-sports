@@ -9,6 +9,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY app ./app
 COPY public ./public
+COPY scripts ./scripts
 COPY next.config.mjs package.json package-lock.json ./
 RUN npm run build
 
