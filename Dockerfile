@@ -8,6 +8,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY app ./app
+COPY data ./data
 COPY public ./public
 COPY scripts ./scripts
 COPY next.config.mjs package.json package-lock.json ./
@@ -21,6 +22,7 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/data ./data
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 

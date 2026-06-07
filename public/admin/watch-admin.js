@@ -100,11 +100,11 @@ function renderMatchSelects() {
   const query = state.matchSearch.trim().toLowerCase();
   const selectedGame = state.matches.find((game) => matchId(game) === state.selectedMatchId);
   const filteredMatches = query ? state.matches.filter((game) => matchSearchText(game).includes(query)) : state.matches;
-  const matches = filteredMatches.slice(0, 50);
+  const matches = filteredMatches;
   byId("matchSelect").value = state.selectedMatchId;
   byId("selectedMatch").textContent = selectedGame ? `المحدد: ${matchLabel(selectedGame)}` : "اختر مباراة من القائمة";
   byId("matchCount").textContent = filteredMatches.length
-    ? `يعرض ${matches.length} من ${filteredMatches.length} مباراة${filteredMatches.length > matches.length ? " - استخدم البحث للوصول للباقي" : ""}`
+    ? `يعرض ${matches.length} مباراة`
     : "لا توجد مباريات مطابقة";
   byId("matchPickerList").innerHTML = matches.length
     ? matches.map((game) => renderMatchChoice(game, matchId(game) === state.selectedMatchId)).join("")
