@@ -229,11 +229,10 @@ function bindEvents() {
 
 async function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  const registrations = await navigator.serviceWorker.getRegistrations();
-  await Promise.all(registrations.map((registration) => registration.unregister()));
-  if ("caches" in window) {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+  try {
+    await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+  } catch (error) {
+    console.warn("Service worker registration failed", error);
   }
 }
 
@@ -242,10 +241,10 @@ async function boot() {
   await loadLanguage();
   bindEvents();
   initPlayer();
+  registerServiceWorker();
   renderFeaturedHome();
   startCountdownTicker();
   await loadData();
-  await registerServiceWorker();
 }
 
 boot();
