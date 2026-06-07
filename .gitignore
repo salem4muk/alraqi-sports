@@ -9,4 +9,5 @@ yarn-error.log*
 pnpm-debug.log*
 *.log
 *.err
+scripts/start-local.*
 archive/
