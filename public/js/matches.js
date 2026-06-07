@@ -44,6 +44,7 @@ function matchdayLabel(match) {
 
 export function renderMatchHero(match) {
   if (!match) return "";
+  const canWatch = match.status === "live" && match.hasWatchLinks;
   const liveBadge =
     match.status === "live"
       ? `<span class="badge live"><span class="live-dot"></span>${t("liveNow")}</span>`
@@ -69,14 +70,14 @@ export function renderMatchHero(match) {
         </div>
       </div>
       <div class="hero-actions">
-        <button class="primary-action" type="button" data-play="match" data-id="${match.id}">${t("watchMatch")}</button>
+        ${canWatch ? `<button class="primary-action" type="button" data-play="match" data-id="${match.id}">${t("watchMatch")}</button>` : ""}
       </div>
     </article>
   `;
 }
 
 export function renderMatchCard(match) {
-  const canWatch = match.status === "live";
+  const canWatch = match.status === "live" && match.hasWatchLinks;
   return `
     <article class="match-card fixture-card">
       <div class="match-card-head">

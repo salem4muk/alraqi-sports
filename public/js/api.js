@@ -1,12 +1,6 @@
 const API_BASE = "/api/worldcup";
 const AR_GROUP_LABEL = "\u0627\u0644\u0645\u062C\u0645\u0648\u0639\u0629";
 
-const beinSportsServers = [
-  { name: "beIN SPORTS 1 VIP", url: "http://172.22.22.33:3220/live/Kings/777823388/2949.m3u8", quality: "HLS" },
-  { name: "beIN SPORTS 2 VIP", url: "http://172.22.22.33:3220/live/Kings/777823388/2950.m3u8", quality: "HLS" },
-  { name: "beIN SPORTS 6 VIP", url: "http://172.22.22.33:3220/live/Kings/777823388/2954.m3u8", quality: "HLS" }
-];
-
 const countryCodes = {
   Algeria: "DZ",
   Argentina: "AR",
@@ -152,7 +146,29 @@ function groupDisplayName(groupName) {
   return key ? `${label} ${key}` : label;
 }
 
-function normalizeGame(game, catalog) {
+function watchLinksByMatchId(links = []) {
+  const byMatch = new Map();
+  links.forEach((link) => {
+    const key = String(link.matchId || "");
+    if (!key) return;
+    const entries = byMatch.get(key) || [];
+    entries.push(link);
+    byMatch.set(key, entries);
+  });
+  return byMatch;
+}
+
+function linkServers(links = []) {
+  return links.map((link, index) => ({
+    id: link.id,
+    name: link.title || link.name || `Server ${index + 1}`,
+    url: link.url,
+    type: link.type || "m3u8",
+    quality: link.quality || "HLS"
+  }));
+}
+
+function normalizeGame(game, catalog, watchLinks = new Map()) {
   const homeEnglish = game.home_team_name_en || game.homeTeam || "";
   const awayEnglish = game.away_team_name_en || game.awayTeam || "";
   const homeInfo = teamMeta(catalog, game.home_team_id, homeEnglish);
@@ -163,9 +179,11 @@ function normalizeGame(game, catalog) {
   const status = game.status || (finished ? "finished" : elapsed && elapsed !== "notstarted" ? "live" : "upcoming");
   const homeName = teamName(catalog, game.home_team_id, homeEnglish, game.home_team_name_ar || game.home_team_name_fa || game.homeTeam);
   const awayName = teamName(catalog, game.away_team_id, awayEnglish, game.away_team_name_ar || game.away_team_name_fa || game.awayTeam);
+  const id = `game-${game.id || game._id || `${homeName}-${awayName}`}`;
+  const servers = linkServers(watchLinks.get(id) || watchLinks.get(String(game.id || "")) || []);
 
   return {
-    id: `game-${game.id || game._id || `${homeName}-${awayName}`}`,
+    id,
     homeTeam: homeName || "Home",
     awayTeam: awayName || "Away",
     homeCode: homeInfo?.fifaCode || game.home_team_code || game.homeCode || teamCodeFallback(homeEnglish || homeName, game.home_team_id),
@@ -180,8 +198,9 @@ function normalizeGame(game, catalog) {
     stadium: game.stadium_name || game.stadium || `Stadium ${game.stadium_id || ""}`.trim(),
     stage: game.stage || (game.type === "group" ? `Group ${game.group} · Matchday ${game.matchday || ""}` : game.type || "World Cup 2026"),
     group: game.group || "",
-    streamUrl: beinSportsServers[0].url,
-    servers: beinSportsServers
+    hasWatchLinks: servers.length > 0,
+    streamUrl: servers[0]?.url || "",
+    servers
   };
 }
 
@@ -243,8 +262,13 @@ function normalizeStadium(stadium) {
 
 export async function getGames() {
   try {
-    const [catalog, payload] = await Promise.all([getTeamCatalog(), fetchJson(`${API_BASE}/games`)]);
-    return { data: normalizeList(payload, "games").map((game) => normalizeGame(game, catalog)), source: "api" };
+    const [catalog, payload, watchPayload] = await Promise.all([
+      getTeamCatalog(),
+      fetchJson(`${API_BASE}/games`),
+      fetchJson("/api/watch-links").catch(() => ({ matchLinks: [] }))
+    ]);
+    const watchLinks = watchLinksByMatchId(normalizeList(watchPayload, "matchLinks"));
+    return { data: normalizeList(payload, "games").map((game) => normalizeGame(game, catalog, watchLinks)), source: "api" };
   } catch (error) {
     return { data: [], source: "error", error };
   }
@@ -283,8 +307,8 @@ export async function getStadiums() {
 export async function getChannels() {
   try {
     const payload = await fetchJson("/api/channels");
-    return { data: normalizeList(payload, "channels"), source: "api" };
+    return { data: normalizeList(payload, "channels"), categories: normalizeList(payload, "categories"), source: "api" };
   } catch (error) {
-    return { data: [], source: "error", error };
+    return { data: [], categories: [], source: "error", error };
   }
 }

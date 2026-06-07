@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "id": "sports",
+      "name": "رياضة",
+      "isActive": true,
+      "sortOrder": 10
+    }
+  ],
+  "channels": [
+    {
+      "id": "channel-bein-sports-1",
+      "name": "beIN SPORTS 1 VIP",
+      "logo": "1",
+      "category": "sports",
+      "isActive": true,
+      "sortOrder": 10,
+      "links": [
+        {
+          "id": "link-bein-sports-1-main",
+          "name": "سيرفر 1",
+          "url": "",
+          "type": "m3u8",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 10
+        }
+      ]
+    },
+    {
+      "id": "channel-bein-sports-2",
+      "name": "beIN SPORTS 2 VIP",
+      "logo": "2",
+      "category": "sports",
+      "isActive": true,
+      "sortOrder": 20,
+      "links": [
+        {
+          "id": "link-bein-sports-2-main",
+          "name": "سيرفر 1",
+          "url": "",
+          "type": "m3u8",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 10
+        }
+      ]
+    },
+    {
+      "id": "channel-bein-sports-6",
+      "name": "beIN SPORTS 6 VIP",
+      "logo": "6",
+      "category": "sports",
+      "isActive": true,
+      "sortOrder": 30,
+      "links": [
+        {
+          "id": "link-bein-sports-6-main",
+          "name": "سيرفر 1",
+          "url": "",
+          "type": "m3u8",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 10
+        }
+      ]
+    }
+  ],
+  "matchLinks": []
+}

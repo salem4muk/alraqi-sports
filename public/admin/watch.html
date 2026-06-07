@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>لوحة روابط المشاهدة - Alraqi Sports</title>
+    <link rel="stylesheet" href="/admin/watch-admin.css?v=6" />
+    <script type="module" src="/admin/watch-admin.js?v=6"></script>
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div>
+          <span class="eyebrow">Alraqi Sports Admin</span>
+          <h1>لوحة القنوات وروابط المشاهدة</h1>
+        </div>
+        <a href="/index.html">فتح التطبيق</a>
+      </header>
+
+      <section class="auth-bar">
+        <label>
+          <span>توكن المشرف</span>
+          <input id="adminToken" type="password" autocomplete="current-password" placeholder="ADMIN_TOKEN" />
+        </label>
+        <button id="loadStore" type="button">تحميل البيانات</button>
+        <button id="saveStore" type="button" class="primary" disabled>حفظ التغييرات</button>
+      </section>
+
+      <p class="notice" id="notice">
+        في التطوير المحلي التوكن الافتراضي هو <code>alraqi-admin</code>. في الإنتاج عرّف متغير البيئة <code>ADMIN_TOKEN</code>.
+      </p>
+
+      <section class="stats-grid" id="statsGrid" hidden>
+        <article>
+          <span>القنوات</span>
+          <strong id="channelsCount">0</strong>
+        </article>
+        <article>
+          <span>روابط القنوات</span>
+          <strong id="channelLinksCount">0</strong>
+        </article>
+        <article>
+          <span>روابط المباريات</span>
+          <strong id="matchLinksCount">0</strong>
+        </article>
+      </section>
+
+      <section class="admin-workspace" id="adminLayout" hidden>
+        <nav class="admin-tabs" aria-label="أقسام لوحة التحكم">
+          <button class="active" type="button" data-admin-tab="channels">القنوات</button>
+          <button type="button" data-admin-tab="matches">روابط المباريات</button>
+        </nav>
+
+        <section class="admin-page active" data-admin-page="channels">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>القنوات</h2>
+                <p>إدارة القنوات وروابط البث العامة التي تظهر في صفحة القنوات.</p>
+              </div>
+              <button id="addChannel" type="button">+ قناة</button>
+            </div>
+            <div class="category-manager">
+              <div>
+                <strong>تصنيفات القنوات</strong>
+                <p>أضف التصنيفات مرة واحدة، ثم اخترها من قائمة منسدلة لكل قناة.</p>
+              </div>
+              <form class="category-form" id="categoryForm">
+                <input id="categoryName" type="text" placeholder="مثال: رياضة، أخبار، أطفال" />
+                <button type="submit">+ تصنيف</button>
+              </form>
+              <div class="category-chips" id="categoryEditor"></div>
+            </div>
+            <div class="table-wrap" id="channelsEditor"></div>
+          </div>
+        </section>
+
+        <section class="admin-page" data-admin-page="matches">
+          <div class="match-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>ربط مباراة برابط مشاهدة</h2>
+                  <p>ابحث عن مباراة من API الحالي، ثم أضف رابط بث خاص بها.</p>
+                </div>
+              </div>
+
+              <form class="match-link-form" id="matchLinkForm">
+                <label>
+                  <span>المباراة</span>
+                  <input id="matchSearch" type="search" autocomplete="off" placeholder="ابحث باسم الفريق أو التاريخ..." />
+                  <input id="matchSelect" type="hidden" required />
+                  <div class="match-picker-list" id="matchPickerList"></div>
+                  <small class="selected-match" id="selectedMatch">اختر مباراة من القائمة</small>
+                </label>
+                <label>
+                  <span>العنوان</span>
+                  <input id="matchLinkTitle" type="text" placeholder="البث الرئيسي" required />
+                </label>
+                <label>
+                  <span>الرابط</span>
+                  <input id="matchLinkUrl" type="url" placeholder="https://example.com/live.m3u8" required />
+                </label>
+                <label>
+                  <span>القناة</span>
+                  <select id="matchLinkChannel"></select>
+                </label>
+                <div class="inline-fields">
+                  <label>
+                    <span>النوع</span>
+                    <select id="matchLinkType">
+                      <option value="m3u8">m3u8</option>
+                      <option value="mp4">mp4</option>
+                      <option value="external">external</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>الجودة</span>
+                    <input id="matchLinkQuality" type="text" value="HLS" />
+                  </label>
+                  <label>
+                    <span>اللغة</span>
+                    <input id="matchLinkLanguage" type="text" value="ar" />
+                  </label>
+                </div>
+                <button class="primary" type="submit">إضافة رابط للمباراة</button>
+              </form>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>روابط المباريات</h2>
+                  <p>مراجعة وتعديل روابط المشاهدة المرتبطة بالمباريات.</p>
+                </div>
+              </div>
+              <div class="list-stack" id="matchLinksEditor"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

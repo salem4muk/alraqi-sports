@@ -1,14 +1,14 @@
-import { getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-21";
-import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-21";
+import { getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-24";
+import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-24";
 import { loadLanguage, t } from "./i18n.js?v=next-21";
-import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero } from "./matches.js?v=next-21";
+import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero } from "./matches.js?v=next-23";
 import { openPlayer, initPlayer } from "./player.js?v=next-21";
 import { globalSearch } from "./search.js?v=next-21";
 import { renderStadiumCard, renderStandings } from "./standings.js?v=next-21";
 import { renderTeamCard } from "./teams.js?v=next-21";
 
 const state = {
-  data: { games: [], teams: [], groups: [], stadiums: [], channels: [] },
+  data: { games: [], teams: [], groups: [], stadiums: [], channels: [], channelCategories: [] },
   matchFilter: "all",
   channelFilter: "all",
   deferredInstallPrompt: null
@@ -86,6 +86,7 @@ function renderFeaturedHome() {
 function getPlayable(type, id) {
   if (type === "match") {
     const match = state.data.games.find((item) => item.id === id);
+    if (!match?.servers?.length && !match?.streamUrl) return null;
     return match ? { ...match, title: `${match.homeTeam} ضد ${match.awayTeam}` } : null;
   }
   return state.data.channels.find((item) => item.id === id);
@@ -117,7 +118,7 @@ function renderMatches() {
 }
 
 function renderChannels() {
-  byId("channelFilters").innerHTML = createChannelFilters(state.channelFilter);
+  byId("channelFilters").innerHTML = createChannelFilters(state.channelFilter, state.data.channelCategories);
   const channels = filterChannels(state.data.channels, state.channelFilter);
   byId("channelsList").innerHTML = channels.length ? channels.map(renderChannelCard).join("") : `<div class="empty-state">${t("noResults")}</div>`;
 }
@@ -169,7 +170,8 @@ async function loadData() {
     teams: teams.data,
     groups: groups.data,
     stadiums: stadiums.data,
-    channels: channels.data
+    channels: channels.data,
+    channelCategories: channels.categories || []
   };
   if ([games, teams, groups, stadiums, channels].some((result) => result.source === "error")) toast(t("noResults"));
   renderAll();

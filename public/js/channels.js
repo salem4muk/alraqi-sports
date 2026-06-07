@@ -1,7 +1,5 @@
 import { t } from "./i18n.js?v=next-21";
 
-export const channelCategories = ["all", "sports"];
-
 function renderChannelLogo(channel) {
   const number = String(channel.name || "").match(/(\d+)$/)?.[1] || channel.logo || "";
   if (String(channel.name || "").toLowerCase().includes("bein")) {
@@ -30,9 +28,10 @@ export function renderChannelCard(channel) {
   `;
 }
 
-export function createChannelFilters(active = "all") {
-  return channelCategories
-    .map((category) => `<button class="chip ${active === category ? "active" : ""}" type="button" data-channel-filter="${category}">${t(category)}</button>`)
+export function createChannelFilters(active = "all", categories = []) {
+  const filters = ["all", ...categories.map((category) => category.id || category).filter(Boolean)];
+  return filters
+    .map((category) => `<button class="chip ${active === category ? "active" : ""}" type="button" data-channel-filter="${category}">${t(category, categories.find((entry) => entry.id === category)?.name || category)}</button>`)
     .join("");
 }
 
