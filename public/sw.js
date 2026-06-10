@@ -1,11 +1,11 @@
-const CACHE_VERSION = "alraqi-sports-v1";
+const CACHE_VERSION = "alraqi-sports-v2";
 const APP_SHELL = [
   "/index.html",
   "/manifest.json?v=next-22",
-  "/css/main.css?v=next-21",
+  "/css/main.css?v=next-30",
   "/css/player.css?v=next-21",
-  "/css/responsive.css?v=next-21",
-  "/js/app.js?v=next-22",
+  "/css/responsive.css?v=next-30",
+  "/js/app.js?v=next-29",
   "/js/api.js?v=next-21",
   "/js/channels.js?v=next-21",
   "/js/i18n.js?v=next-21",
