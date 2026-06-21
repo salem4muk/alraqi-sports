@@ -1,4 +1,4 @@
-import { t } from "./i18n.js?v=next-21";
+import { t } from "./i18n.js?v=next-22";
 
 function renderChannelLogo(channel) {
   const number = String(channel.name || "").match(/(\d+)$/)?.[1] || channel.logo || "";

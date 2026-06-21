@@ -13,7 +13,7 @@ export function getLanguage() {
 
 export async function loadLanguage() {
   try {
-    const response = await fetch(`./languages/${APP_LANGUAGE}.json`);
+    const response = await fetch(`./languages/${APP_LANGUAGE}.json?v=next-22`, { cache: "no-store" });
     dictionary = await response.json();
     currentLanguage = APP_LANGUAGE;
   } catch {

@@ -25,8 +25,14 @@
 }
 
 @media (min-width: 960px) {
+  :root {
+    --bottom-nav-height: 90px;
+    --bottom-nav-gap: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+    --content-bottom-space: calc(var(--bottom-nav-height) + var(--bottom-nav-gap) + 36px);
+  }
+
   .app-shell {
-    padding: 24px 42px 128px;
+    padding: 24px 42px var(--content-bottom-space);
   }
 
   .app-header {
@@ -125,7 +131,7 @@
   }
 
   .match-card-team strong {
-    max-width: min(240px, 100%);
+    max-width: 100%;
   }
 
   .match-card-actions {

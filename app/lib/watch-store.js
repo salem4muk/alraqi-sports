@@ -123,7 +123,7 @@ export function cleanStore(store = defaultStore) {
     channels: (Array.isArray(store.channels) ? store.channels : []).map(cleanChannel).sort(sortByOrderThenName),
     matchLinks: (Array.isArray(store.matchLinks) ? store.matchLinks : [])
       .map(cleanMatchLink)
-      .filter((link) => link.matchId && link.url)
+      .filter((link) => link.matchId && (link.url || link.channelId))
       .sort(sortByOrderThenName)
   };
 }
@@ -187,9 +187,39 @@ export function publicMatchLink(link) {
   };
 }
 
+export function resolvePublicMatchLinks(store, matchLinks = []) {
+  const channels = new Map(
+    (Array.isArray(store?.channels) ? store.channels : [])
+      .filter((channel) => channel.isActive)
+      .map((channel) => [channel.id, channel])
+  );
+
+  return matchLinks.flatMap((link) => {
+    if (link.url) return [publicMatchLink(link)];
+
+    const channel = channels.get(link.channelId);
+    if (!channel) return [];
+
+    return channel.links
+      .filter((server) => server.isActive && server.url)
+      .sort(sortByOrderThenName)
+      .map((server) => ({
+        id: `${link.id}-${server.id}`,
+        matchId: link.matchId,
+        title: channel.name,
+        name: server.name || channel.name,
+        url: server.url,
+        type: server.type,
+        quality: server.quality,
+        language: link.language,
+        channelId: channel.id
+      }));
+  });
+}
+
 export function matchKeysFromGame(game = {}) {
   const keys = new Set();
-  [game.id, game._id, game.match_id, game.matchId].forEach((value) => {
+  [game.id, game._id, game.match_id, game.matchId, game.legacy_id, game.n].forEach((value) => {
     if (value == null || value === "") return;
     keys.add(String(value));
     keys.add(`game-${value}`);

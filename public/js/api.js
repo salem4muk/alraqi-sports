@@ -1,5 +1,6 @@
 const API_BASE = "/api/worldcup";
 const AR_GROUP_LABEL = "\u0627\u0644\u0645\u062C\u0645\u0648\u0639\u0629";
+const GROUP_ORDER = "ABCDEFGHIJKL".split("");
 
 const countryCodes = {
   Algeria: "DZ",
@@ -67,6 +68,78 @@ const stadiumImageByName = {
   "Toronto Stadium": "/assets/stadiums/toronto-stadium.png",
   "BMO Field": "/assets/stadiums/toronto-stadium.png"
 };
+
+const stadiumArabicByName = {
+  "Los Angeles Stadium": "ملعب لوس أنجلوس",
+  "SoFi Stadium": "ملعب صوفي",
+  "Atlanta Stadium": "ملعب أتلانتا",
+  "Mercedes-Benz Stadium": "ملعب مرسيدس بنز",
+  "Seattle Stadium": "ملعب سياتل",
+  "Lumen Field": "لومن فيلد",
+  "Mexico City Stadium": "ملعب مدينة مكسيكو",
+  "Estadio Azteca": "ملعب أزتيكا",
+  "Monterrey Stadium": "ملعب مونتيري",
+  "Estadio Monterrey": "ملعب مونتيري",
+  "Estadio BBVA": "ملعب بي بي في إيه",
+  "Toronto Stadium": "ملعب تورونتو",
+  "BMO Field": "ملعب بي إم أو",
+  "BC Place Vancouver": "ملعب بي سي بليس فانكوفر",
+  "BC Place": "ملعب بي سي بليس",
+  "Philadelphia Stadium": "ملعب فيلادلفيا",
+  "Lincoln Financial Field": "لينكولن فاينانشال فيلد",
+  "Boston Stadium": "ملعب بوسطن",
+  "Gillette Stadium": "ملعب جيليت",
+  "Houston Stadium": "ملعب هيوستن",
+  "NRG Stadium": "ملعب إن آر جي",
+  "Guadalajara Stadium": "ملعب غوادالاخارا",
+  "Estadio Guadalajara": "ملعب غوادالاخارا",
+  "Estadio Akron": "ملعب أكرون",
+  "Kansas City Stadium": "ملعب كانساس سيتي",
+  "GEHA Field at Arrowhead Stadium": "ملعب أروهيد",
+  "San Francisco Bay Area Stadium": "ملعب منطقة خليج سان فرانسيسكو",
+  "Levi's Stadium": "ملعب ليفاي",
+  "Miami Stadium": "ملعب ميامي",
+  "Hard Rock Stadium": "ملعب هارد روك",
+  "Dallas Stadium": "ملعب دالاس",
+  "AT&T Stadium": "ملعب إيه تي آند تي",
+  "New York/New Jersey Stadium": "ملعب نيويورك ونيوجيرسي",
+  "MetLife Stadium": "ملعب ميتلايف"
+};
+
+const cityArabicByName = {
+  Atlanta: "أتلانتا",
+  Boston: "بوسطن",
+  Dallas: "دالاس",
+  Guadalajara: "غوادالاخارا",
+  Houston: "هيوستن",
+  "Kansas City": "كانساس سيتي",
+  "Los Angeles": "لوس أنجلوس",
+  Miami: "ميامي",
+  Monterrey: "مونتيري",
+  "Mexico City": "مدينة مكسيكو",
+  "New Jersey": "نيوجيرسي",
+  Philadelphia: "فيلادلفيا",
+  Seattle: "سياتل",
+  "San Francisco Bay Area": "منطقة خليج سان فرانسيسكو",
+  Toronto: "تورونتو",
+  Vancouver: "فانكوفر"
+};
+
+const countryArabicByName = {
+  Canada: "كندا",
+  Mexico: "المكسيك",
+  "United States": "الولايات المتحدة"
+};
+
+const regionArabicByName = {
+  Central: "المنطقة الوسطى",
+  Eastern: "المنطقة الشرقية",
+  Western: "المنطقة الغربية"
+};
+
+function arabicStadiumName(value = "") {
+  return (stadiumArabicByName[value] || value).replace(/^استاد\s+/, "ملعب ");
+}
 
 let teamCatalogPromise = null;
 
@@ -155,15 +228,66 @@ function parseLocalDate(localDate = "") {
   };
 }
 
+function parseYemenDate(utcDate = "") {
+  const date = new Date(utcDate);
+  if (!utcDate || Number.isNaN(date.getTime())) return null;
+
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Aden",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    })
+      .formatToParts(date)
+      .map((part) => [part.type, part.value])
+  );
+
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute}`
+  };
+}
+
 function numberValue(value) {
   const number = Number.parseInt(value, 10);
   return Number.isNaN(number) ? 0 : number;
+}
+
+function isFiniteScore(value) {
+  return Number.isFinite(Number(value));
 }
 
 function groupDisplayName(groupName) {
   const key = String(groupName || "").trim();
   const label = currentLanguage() === "ar" ? AR_GROUP_LABEL : "Group";
   return key ? `${label} ${key}` : label;
+}
+
+function groupSortValue(groupName = "") {
+  const key = String(groupName || "").trim().toUpperCase();
+  const index = GROUP_ORDER.indexOf(key);
+  return index === -1 ? GROUP_ORDER.length : index;
+}
+
+function compareGroups(a, b) {
+  const aKey = a?.key || a?.name || "";
+  const bKey = b?.key || b?.name || "";
+  return groupSortValue(aKey) - groupSortValue(bKey) || String(aKey).localeCompare(String(bKey), "en", { numeric: true });
+}
+
+function compareStandingsRows(a, b) {
+  return (
+    b.points - a.points ||
+    b.goalDifference - a.goalDifference ||
+    b.goalsFor - a.goalsFor ||
+    a.goalsAgainst - b.goalsAgainst ||
+    b.wins - a.wins ||
+    a.order - b.order
+  );
 }
 
 function watchLinksByMatchId(links = []) {
@@ -178,10 +302,15 @@ function watchLinksByMatchId(links = []) {
   return byMatch;
 }
 
+function linksForMatch(watchLinks, id, rawId) {
+  const specific = watchLinks.get(id) || watchLinks.get(String(rawId || "")) || [];
+  return specific.length ? specific : watchLinks.get("*") || [];
+}
+
 function linkServers(links = []) {
   return links.map((link, index) => ({
     id: link.id,
-    name: link.title || link.name || `Server ${index + 1}`,
+    name: link.name || link.title || `Server ${index + 1}`,
     url: link.url,
     type: link.type || "m3u8",
     quality: link.quality || "HLS"
@@ -194,6 +323,7 @@ function normalizeGame(game, catalog, watchLinks = new Map()) {
   const homeInfo = teamMeta(catalog, game.home_team_id, homeEnglish);
   const awayInfo = teamMeta(catalog, game.away_team_id, awayEnglish);
   const localDate = parseLocalDate(game.local_date);
+  const yemenDate = parseYemenDate(game.utc_date || game.utcDate);
   const finished = parseBoolean(game.finished);
   const elapsed = String(game.time_elapsed || "").toLowerCase();
   const status = game.status || (finished ? "finished" : elapsed && elapsed !== "notstarted" ? "live" : "upcoming");
@@ -202,12 +332,14 @@ function normalizeGame(game, catalog, watchLinks = new Map()) {
   const homeName = displayTeamName(rawHomeName);
   const awayName = displayTeamName(rawAwayName);
   const id = `game-${game.id || game._id || `${homeName}-${awayName}`}`;
-  const servers = linkServers(watchLinks.get(id) || watchLinks.get(String(game.id || "")) || []);
+  const servers = linkServers(linksForMatch(watchLinks, id, game.id));
   const fallbackHomeCode = isPlaceholderTeamName(rawHomeName) ? "" : teamCodeFallback(homeEnglish || homeName, game.home_team_id);
   const fallbackAwayCode = isPlaceholderTeamName(rawAwayName) ? "" : teamCodeFallback(awayEnglish || awayName, game.away_team_id);
 
   return {
     id,
+    homeTeamId: String(game.home_team_id || game.homeTeamId || ""),
+    awayTeamId: String(game.away_team_id || game.awayTeamId || ""),
     homeTeam: homeName,
     awayTeam: awayName,
     homeCode: cleanTeamCode(homeInfo?.fifaCode || game.home_team_code || game.homeCode, fallbackHomeCode),
@@ -216,10 +348,11 @@ function normalizeGame(game, catalog, watchLinks = new Map()) {
     awayFlag: cleanFlag(awayInfo?.flag || game.away_flag || game.awayFlag || ""),
     homeScore: Number.parseInt(game.home_score ?? game.homeScore, 10),
     awayScore: Number.parseInt(game.away_score ?? game.awayScore, 10),
-    date: game.date || localDate.date,
-    time: game.time || localDate.time,
+    date: yemenDate?.date || game.date || localDate.date,
+    time: yemenDate?.time || game.time || localDate.time,
+    utcDate: game.utc_date || game.utcDate || "",
     status,
-    stadium: game.stadium_name || game.stadium || `Stadium ${game.stadium_id || ""}`.trim(),
+    stadium: arabicStadiumName(game.stadium_name_ar || game.stadium_name || game.stadium) || `ملعب ${game.stadium_id || ""}`.trim(),
     stage: game.stage || (game.type === "group" ? `Group ${game.group} · Matchday ${game.matchday || ""}` : game.type || "World Cup 2026"),
     group: game.group || "",
     hasWatchLinks: servers.length > 0,
@@ -230,10 +363,11 @@ function normalizeGame(game, catalog, watchLinks = new Map()) {
 
 function normalizeTeam(team, catalog) {
   const englishName = team.name_en || team.country || team.name || "";
-  const translated = teamName(catalog, team.id, englishName, team.name_fa || team.name_ar || team.name || englishName);
+  const translated = teamName(catalog, team.id, englishName, team.name_ar || team.name_fa || team.name || englishName);
   const info = teamMeta(catalog, team.id, englishName);
   return {
     id: `team-${team.id || team._id || englishName}`,
+    externalTeamId: String(team.id || team.team_id || team._id || ""),
     name: translated || englishName,
     code: info?.fifaCode || team.fifa_code || team.code || teamCodeFallback(englishName, team.id),
     flag: info?.flag || team.flag || "",
@@ -264,23 +398,106 @@ function normalizeGroup(group, catalog) {
   return {
     name: groupDisplayName(group.name),
     key: group.name,
-    rows: rows.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference || b.goalsFor - a.goalsFor || a.order - b.order)
+    rows: rows.sort(compareStandingsRows)
   };
 }
 
+function emptyStandingRow(team, order) {
+  return {
+    id: team.externalTeamId || team.id,
+    team: team.name,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    goals: "0:0",
+    points: 0,
+    order
+  };
+}
+
+function addResult(row, goalsFor, goalsAgainst) {
+  row.played += 1;
+  row.goalsFor += goalsFor;
+  row.goalsAgainst += goalsAgainst;
+  row.goalDifference = row.goalsFor - row.goalsAgainst;
+  row.goals = `${row.goalsFor}:${row.goalsAgainst}`;
+  if (goalsFor > goalsAgainst) {
+    row.wins += 1;
+    row.points += 3;
+  } else if (goalsFor === goalsAgainst) {
+    row.draws += 1;
+    row.points += 1;
+  } else {
+    row.losses += 1;
+  }
+}
+
+export function buildStandingsGroups(games = [], teams = [], fallbackGroups = []) {
+  const groups = new Map();
+  const rowByTeamId = new Map();
+  const teamsByGroup = new Map();
+
+  teams.forEach((team) => {
+    const groupKey = String(team.group || "").trim().toUpperCase();
+    if (!GROUP_ORDER.includes(groupKey)) return;
+    const entries = teamsByGroup.get(groupKey) || [];
+    entries.push(team);
+    teamsByGroup.set(groupKey, entries);
+  });
+
+  teamsByGroup.forEach((groupTeams, groupKey) => {
+    const sortedTeams = [...groupTeams].sort((a, b) => numberValue(a.externalTeamId) - numberValue(b.externalTeamId));
+    const rows = sortedTeams.map((team, index) => {
+      const row = emptyStandingRow(team, index);
+      if (team.externalTeamId) rowByTeamId.set(team.externalTeamId, row);
+      return row;
+    });
+    groups.set(groupKey, { name: groupDisplayName(groupKey), key: groupKey, rows });
+  });
+
+  games.forEach((game) => {
+    const groupKey = String(game.group || "").trim().toUpperCase();
+    if (!groups.has(groupKey) || !["live", "finished"].includes(game.status)) return;
+    if (!isFiniteScore(game.homeScore) || !isFiniteScore(game.awayScore)) return;
+
+    const homeRow = rowByTeamId.get(String(game.homeTeamId || ""));
+    const awayRow = rowByTeamId.get(String(game.awayTeamId || ""));
+    if (!homeRow || !awayRow) return;
+
+    const homeScore = Number(game.homeScore);
+    const awayScore = Number(game.awayScore);
+    addResult(homeRow, homeScore, awayScore);
+    addResult(awayRow, awayScore, homeScore);
+  });
+
+  const computedGroups = [...groups.values()].map((group) => ({
+    ...group,
+    rows: [...group.rows].sort(compareStandingsRows)
+  }));
+
+  if (computedGroups.length) return computedGroups.sort(compareGroups);
+  return [...fallbackGroups].sort(compareGroups);
+}
+
 function normalizeStadium(stadium) {
-  const name = stadium.fifa_name || stadium.name_en || stadium.name_fa || stadium.name || "Stadium";
-  const image = stadium.image || stadium.image_url || stadium.photo || stadium.thumbnail || stadiumImageByName[name] || stadiumImageByName[stadium.name_en] || "";
+  const englishName = stadium.fifa_name || stadium.name_en || stadium.name || "Stadium";
+  const name = arabicStadiumName(stadium.fifa_name_ar || stadium.name_ar || stadiumArabicByName[englishName] || stadium.name_fa || englishName);
+  const image = stadium.image || stadium.image_url || stadium.photo || stadium.thumbnail || stadiumImageByName[englishName] || stadiumImageByName[stadium.name_en] || "";
+  const officialEnglish = stadium.real_name_en || stadium.name_en || "";
 
   return {
     id: `stadium-${stadium.id || stadium._id || stadium.name_en || stadium.name}`,
     name,
-    officialName: stadium.name_en || "",
-    country: stadium.country_en || stadium.country_fa || stadium.country || "",
-    city: stadium.city_en || stadium.city_fa || stadium.city || "",
+    officialName: stadiumArabicByName[officialEnglish] || arabicStadiumName(stadium.name_ar) || officialEnglish,
+    country: stadium.country_ar || countryArabicByName[stadium.country_en] || stadium.country_fa || stadium.country_en || stadium.country || "",
+    city: stadium.city_ar || cityArabicByName[stadium.city_en] || stadium.city_fa || stadium.city_en || stadium.city || "",
     capacity: numberValue(stadium.capacity),
     image,
-    region: stadium.region || ""
+    region: regionArabicByName[stadium.region] || stadium.region || ""
   };
 }
 
@@ -312,7 +529,7 @@ export async function getGroups() {
     const [catalog, payload] = await Promise.all([getTeamCatalog(), fetchJson(`${API_BASE}/groups`)]);
     const groups = normalizeList(payload, "groups")
       .map((group) => normalizeGroup(group, catalog))
-      .sort((a, b) => String(a.key || a.name).localeCompare(String(b.key || b.name), "en", { numeric: true }));
+      .sort(compareGroups);
     return { data: groups, source: "api" };
   } catch (error) {
     return { data: [], source: "error", error };

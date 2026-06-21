@@ -1,39 +1,27 @@
 import { NextResponse } from "next/server";
-import { matchKeysFromGame, publicMatchLink, readWatchStore } from "../../lib/watch-store.js";
-
-const API_BASE = "https://worldcup26.ir";
+import { matchKeysFromGame, readWatchStore, resolvePublicMatchLinks } from "../../lib/watch-store.js";
+import { getWorldCupResource } from "../../lib/worldcup-data.js";
 
 export const dynamic = "force-dynamic";
 
 async function fetchGames() {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
-
   try {
-    const response = await fetch(`${API_BASE}/get/games`, {
-      cache: "no-store",
-      headers: {
-        accept: "application/json"
-      },
-      signal: controller.signal
-    });
-
-    if (!response.ok) {
-      return { error: "WORLD_CUP_API_ERROR", status: response.status, games: [] };
-    }
-
-    const payload = await response.json();
-    return { games: Array.isArray(payload?.games) ? payload.games : Array.isArray(payload) ? payload : [] };
+    const result = await getWorldCupResource("games");
+    const games = Array.isArray(result.payload?.games) ? result.payload.games : [];
+    return { games, source: result.source, updatedAt: result.payload?.updatedAt };
   } catch (error) {
-    return { error: "WORLD_CUP_API_UNAVAILABLE", message: error?.message || "Request failed", games: [] };
-  } finally {
-    clearTimeout(timeoutId);
+    return {
+      error: error?.code || "WORLD_CUP_API_UNAVAILABLE",
+      message: error?.message || "Request failed",
+      details: error?.details,
+      games: []
+    };
   }
 }
 
-function linksForGame(game, matchLinks) {
+function linksForGame(game, store, matchLinks) {
   const keys = matchKeysFromGame(game);
-  return matchLinks.filter((link) => keys.has(link.matchId)).map(publicMatchLink);
+  return resolvePublicMatchLinks(store, matchLinks.filter((link) => keys.has(link.matchId)));
 }
 
 export async function GET(request) {
@@ -42,7 +30,7 @@ export async function GET(request) {
   const [gamesResult, store] = await Promise.all([fetchGames(), readWatchStore()]);
   const activeLinks = store.matchLinks.filter((link) => link.isActive);
   const games = gamesResult.games.map((game) => {
-    const watchLinks = linksForGame(game, activeLinks);
+    const watchLinks = linksForGame(game, store, activeLinks);
     return {
       ...game,
       externalMatchId: game.id != null ? `game-${game.id}` : String(game._id || game.match_id || ""),
@@ -52,10 +40,18 @@ export async function GET(request) {
   });
 
   return NextResponse.json(
-    { games, source: gamesResult.error ? "partial" : "api", error: gamesResult.error, message: gamesResult.message, status: gamesResult.status },
+    {
+      games,
+      source: gamesResult.error ? "partial" : gamesResult.source,
+      updatedAt: gamesResult.updatedAt,
+      error: gamesResult.error,
+      message: gamesResult.message,
+      details: gamesResult.details
+    },
     {
       headers: {
-        "Cache-Control": "no-store"
+        "Cache-Control": "no-store",
+        ...(gamesResult.source ? { "X-World-Cup-Source": gamesResult.source } : {})
       }
     }
   );

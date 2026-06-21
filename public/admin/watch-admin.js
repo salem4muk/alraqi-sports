@@ -4,6 +4,7 @@ const state = {
   matches: [],
   selectedMatchId: "",
   matchSearch: "",
+  matchFilter: "today",
   activeTab: "channels"
 };
 
@@ -49,7 +50,68 @@ function pickTeamName(game, side) {
 }
 
 function matchDate(game) {
-  return String(game.local_date || `${game.date || ""} ${game.time || ""}`.trim()).trim();
+  const timestamp = matchTimestamp(game);
+  if (!timestamp) return String(game.local_date || `${game.date || ""} ${game.time || ""}`.trim()).trim();
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Aden",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    })
+      .formatToParts(new Date(timestamp))
+      .map((part) => [part.type, part.value])
+  );
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+}
+
+function matchTimestamp(game) {
+  const timestamp = Date.parse(game.utc_date || game.utcDate || "");
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function yemenDateKey(timestamp = Date.now()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Aden",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(timestamp));
+}
+
+function matchesForFilter(filter) {
+  const today = yemenDateKey();
+  const filtered = state.matches.filter((game) => {
+    if (filter === "today") return matchTimestamp(game) && yemenDateKey(matchTimestamp(game)) === today;
+    if (filter === "live") return game.status === "live";
+    if (filter === "upcoming") return game.status === "upcoming";
+    if (filter === "finished") return game.status === "finished";
+    return true;
+  });
+
+  return filtered.sort((a, b) => {
+    const difference = matchTimestamp(a) - matchTimestamp(b);
+    return filter === "finished" ? -difference : difference;
+  });
+}
+
+function renderMatchFilters() {
+  const filters = [
+    ["today", "اليوم"],
+    ["live", "مباشرة"],
+    ["upcoming", "قادمة"],
+    ["finished", "منتهية"],
+    ["all", "الكل"]
+  ];
+  byId("matchFilters").innerHTML = filters
+    .map(([value, label]) => {
+      const count = matchesForFilter(value).length;
+      return `<button class="match-filter-button ${state.matchFilter === value ? "active" : ""}" type="button" data-match-filter="${value}">${label} (${count})</button>`;
+    })
+    .join("");
 }
 
 function matchLabel(game) {
@@ -64,7 +126,21 @@ function matchSearchText(game) {
 }
 
 function activeChannels() {
-  return state.store?.channels || [];
+  return (state.store?.channels || []).filter((channel) => channel.isActive !== false);
+}
+
+function channelHasStream(channel) {
+  return (channel.links || []).some((link) => link.isActive !== false && String(link.url || "").trim());
+}
+
+function channelOptions(selected = "", includeEmpty = true) {
+  const emptyOption = includeEmpty ? `<option value="">رابط خارجي بدون قناة</option>` : "";
+  return `${emptyOption}${activeChannels()
+    .map((channel) => {
+      const available = channelHasStream(channel);
+      return `<option value="${escapeHtml(channel.id)}" ${channel.id === selected ? "selected" : ""} ${available ? "" : "disabled"}>${escapeHtml(channel.name)}${available ? "" : " - لا يوجد رابط بث"}</option>`;
+    })
+    .join("")}`;
 }
 
 function categories() {
@@ -99,8 +175,10 @@ function renderStats() {
 function renderMatchSelects() {
   const query = state.matchSearch.trim().toLowerCase();
   const selectedGame = state.matches.find((game) => matchId(game) === state.selectedMatchId);
-  const filteredMatches = query ? state.matches.filter((game) => matchSearchText(game).includes(query)) : state.matches;
+  const filterMatches = matchesForFilter(state.matchFilter);
+  const filteredMatches = query ? filterMatches.filter((game) => matchSearchText(game).includes(query)) : filterMatches;
   const matches = filteredMatches;
+  renderMatchFilters();
   byId("matchSelect").value = state.selectedMatchId;
   byId("selectedMatch").textContent = selectedGame ? `المحدد: ${matchLabel(selectedGame)}` : "اختر مباراة من القائمة";
   byId("matchCount").textContent = filteredMatches.length
@@ -109,9 +187,7 @@ function renderMatchSelects() {
   byId("matchPickerList").innerHTML = matches.length
     ? matches.map((game) => renderMatchChoice(game, matchId(game) === state.selectedMatchId)).join("")
     : `<div class="empty compact-empty">لا توجد مباريات مطابقة</div>`;
-  byId("matchLinkChannel").innerHTML = `<option value="">بدون قناة</option>${activeChannels()
-    .map((channel) => `<option value="${channel.id}">${channel.name}${channel.category ? ` - ${channel.category}` : ""}</option>`)
-    .join("")}`;
+  byId("matchLinkChannel").innerHTML = channelOptions(byId("matchLinkChannel").value);
 }
 
 function renderCategories() {
@@ -234,6 +310,15 @@ function renderChannelLink(channelIndex, linkIndex, link) {
         <input data-channel="${channelIndex}" data-link="${linkIndex}" data-field="quality" value="${escapeHtml(link.quality || "HLS")}" placeholder="HD / FHD / HLS" />
       </label>
       <label>
+        <span>نوع البث</span>
+        <select data-channel="${channelIndex}" data-link="${linkIndex}" data-field="type">
+          <option value="m3u8" ${link.type === "m3u8" ? "selected" : ""}>HLS / m3u8</option>
+          <option value="mpegts" ${["mpegts", "ts"].includes(link.type) ? "selected" : ""}>MPEG-TS مباشر</option>
+          <option value="mp4" ${link.type === "mp4" ? "selected" : ""}>MP4</option>
+          <option value="external" ${link.type === "external" ? "selected" : ""}>رابط خارجي</option>
+        </select>
+      </label>
+      <label>
         <span>الحالة</span>
         <select data-channel="${channelIndex}" data-link="${linkIndex}" data-field="isActive">
           <option value="true" ${link.isActive ? "selected" : ""}>فعال</option>
@@ -265,12 +350,18 @@ function renderMatchLinks() {
                   <input data-match-link="${index}" data-field="title" value="${escapeHtml(link.title)}" />
                 </label>
                 <label>
+                  <span>القناة</span>
+                  <select data-match-link="${index}" data-field="channelId">
+                    ${channelOptions(link.channelId)}
+                  </select>
+                </label>
+                <label>
                   <span>الجودة</span>
                   <input data-match-link="${index}" data-field="quality" value="${escapeHtml(link.quality || "")}" />
                 </label>
                 <label class="wide">
-                  <span>الرابط</span>
-                  <input data-match-link="${index}" data-field="url" value="${escapeHtml(link.url)}" />
+                  <span>الرابط الخارجي - اختياري</span>
+                  <input data-match-link="${index}" data-field="url" value="${escapeHtml(link.url)}" placeholder="يُترك فارغًا لاستخدام روابط القناة" />
                 </label>
                 <label>
                   <span>النوع</span>
@@ -424,22 +515,34 @@ function bindEvents() {
     renderAll();
   });
 
-  byId("matchLinkForm").addEventListener("submit", (event) => {
+  byId("matchLinkForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!byId("matchSelect").value) {
       setNotice("اختر مباراة أولًا من نتائج البحث.", "error");
       byId("matchSearch").focus();
       return;
     }
+    const channelId = byId("matchLinkChannel").value;
+    const externalUrl = byId("matchLinkUrl").value.trim();
+    if (!channelId && !externalUrl) {
+      setNotice("اختر قناة موجودة أو أدخل رابطًا خارجيًا.", "error");
+      byId("matchLinkChannel").focus();
+      return;
+    }
+    const channel = activeChannels().find((entry) => entry.id === channelId);
+    if (channelId && !channelHasStream(channel)) {
+      setNotice("القناة المختارة لا تحتوي رابط بث فعالًا.", "error");
+      return;
+    }
     state.store.matchLinks.push({
       id: uid("match-link"),
       matchId: byId("matchSelect").value,
-      title: byId("matchLinkTitle").value.trim(),
-      url: byId("matchLinkUrl").value.trim(),
+      title: byId("matchLinkTitle").value.trim() || channel?.name || "رابط خارجي",
+      url: externalUrl,
       type: byId("matchLinkType").value,
       quality: byId("matchLinkQuality").value.trim() || "HLS",
       language: byId("matchLinkLanguage").value.trim() || "ar",
-      channelId: byId("matchLinkChannel").value,
+      channelId,
       isActive: true,
       sortOrder: state.store.matchLinks.length * 10
     });
@@ -450,6 +553,12 @@ function bindEvents() {
     byId("matchLinkQuality").value = "HLS";
     byId("matchLinkLanguage").value = "ar";
     renderAll();
+    try {
+      await saveData();
+      setNotice("تم ربط المباراة وحفظ خيار المشاهدة بنجاح.", "success");
+    } catch (error) {
+      setNotice(`تمت الإضافة محليًا لكن فشل الحفظ: ${error.message}`, "error");
+    }
   });
 
   document.body.addEventListener("input", (event) => {
@@ -478,6 +587,14 @@ function bindEvents() {
     const pickMatch = event.target.closest("[data-pick-match]");
     if (pickMatch) {
       state.selectedMatchId = pickMatch.dataset.pickMatch;
+      state.matchSearch = "";
+      byId("matchSearch").value = "";
+      renderMatchSelects();
+    }
+
+    const matchFilter = event.target.closest("[data-match-filter]");
+    if (matchFilter) {
+      state.matchFilter = matchFilter.dataset.matchFilter;
       state.matchSearch = "";
       byId("matchSearch").value = "";
       renderMatchSelects();

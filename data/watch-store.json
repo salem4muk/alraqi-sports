@@ -29,20 +29,47 @@
     },
     {
       "id": "channel-bein-sports-2",
-      "name": "beIN SPORTS 2 VIP",
+      "name": "Bein Sports Max 2",
       "logo": "2",
       "category": "sports",
       "isActive": true,
       "sortOrder": 20,
       "links": [
         {
-          "id": "link-bein-sports-2-main",
-          "name": "سيرفر 1",
-          "url": "",
-          "type": "m3u8",
+          "id": "channel-link-d4845e30-c236-40b1-8503-c3246cd28362",
+          "name": "جودة ضعيفة",
+          "url": "http://storelink.space:8080/32504368685427/17506948707894/1548689",
+          "type": "mpegts",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 0
+        },
+        {
+          "id": "channel-link-5b184c25-559e-471a-9f21-7a380fed51c8",
+          "name": "جودة متوسطة",
+          "url": "http://storelink.space:8080/32504368685427/17506948707894/1548690",
+          "type": "mpegts",
           "quality": "HLS",
           "isActive": true,
           "sortOrder": 10
+        },
+        {
+          "id": "channel-link-1c4b8a30-71e4-42dd-b603-1416a804c297",
+          "name": "جودة عالية",
+          "url": "http://storelink.space:8080/32504368685427/17506948707894/1548691",
+          "type": "mpegts",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 20
+        },
+        {
+          "id": "channel-link-63eb6a8b-9a33-4d53-83a8-d30be66477e9",
+          "name": "جودة عالية جدًا",
+          "url": "http://storelink.space:8080/32504368685427/17506948707894/1548692",
+          "type": "mpegts",
+          "quality": "HLS",
+          "isActive": true,
+          "sortOrder": 30
         }
       ]
     },
@@ -66,5 +93,19 @@
       ]
     }
   ],
-  "matchLinks": []
+  "matchLinks": [
+    {
+      "id": "match-link-6499c1c9-8d42-4d2e-b685-9519452b6e8a",
+      "matchId": "game-400021460",
+      "title": "Bein Sports Max 2",
+      "url": "",
+      "type": "m3u8",
+      "quality": "HLS",
+      "language": "ar",
+      "channelId": "channel-bein-sports-2",
+      "note": "",
+      "isActive": true,
+      "sortOrder": 0
+    }
+  ]
 }

@@ -1,10 +1,10 @@
-import { getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-27";
-import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-25";
-import { loadLanguage, t } from "./i18n.js?v=next-21";
-import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero, renderMatchTimeline } from "./matches.js?v=next-29";
-import { openPlayer, initPlayer } from "./player.js?v=next-21";
+import { buildStandingsGroups, getChannels, getGames, getGroups, getStadiums, getTeams } from "./api.js?v=next-36";
+import { renderChannelCard, createChannelFilters, filterChannels } from "./channels.js?v=next-26";
+import { loadLanguage, t } from "./i18n.js?v=next-22";
+import { createMatchFilters, filterMatches, renderMatchCard, renderMatchHero, renderMatchTimeline, sortMatches } from "./matches.js?v=next-36";
+import { openPlayer, initPlayer } from "./player.js?v=next-24";
 import { globalSearch } from "./search.js?v=next-21";
-import { renderStadiumCard, renderStandings } from "./standings.js?v=next-21";
+import { renderStadiumCard, renderStandings } from "./standings.js?v=next-23";
 import { renderTeamCard } from "./teams.js?v=next-21";
 
 const state = {
@@ -73,13 +73,51 @@ function renderWorldCupCountdown() {
   `;
 }
 
+function matchTimestamp(match) {
+  const utcTimestamp = Date.parse(match.utcDate || "");
+  if (Number.isFinite(utcTimestamp)) return utcTimestamp;
+
+  const localTimestamp = Date.parse(`${match.date || ""}T${match.time || "00:00"}:00`);
+  return Number.isFinite(localTimestamp) ? localTimestamp : 0;
+}
+
+function selectFeaturedMatch(matches = []) {
+  const liveMatch = matches
+    .filter((match) => match.status === "live")
+    .sort((a, b) => matchTimestamp(b) - matchTimestamp(a))[0];
+  if (liveMatch) return liveMatch;
+
+  const latestFinished = matches
+    .filter((match) => match.status === "finished")
+    .sort((a, b) => matchTimestamp(b) - matchTimestamp(a))[0];
+  if (latestFinished) return latestFinished;
+
+  return matches
+    .filter((match) => match.status === "upcoming")
+    .sort((a, b) => matchTimestamp(a) - matchTimestamp(b))[0] || matches[0];
+}
+
+function yemenToday() {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Aden",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })
+      .formatToParts(new Date())
+      .map((part) => [part.type, part.value])
+  );
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
 function renderFeaturedHome() {
   if (Date.now() < WORLD_CUP_START.getTime()) {
     byId("featuredMatch").innerHTML = renderWorldCupCountdown();
     return;
   }
 
-  const featured = state.data.games.find((match) => match.status === "live") || state.data.games[0];
+  const featured = selectFeaturedMatch(state.data.games);
   byId("featuredMatch").innerHTML = renderMatchHero(featured);
 }
 
@@ -94,20 +132,42 @@ function getPlayable(type, id) {
 
 function renderHome() {
   renderFeaturedHome();
-  const homeMatches = state.data.games
-    .filter((match) => match.status === "live" || match.status === "upcoming")
-    .slice(0, 5);
-  byId("liveMatchesList").innerHTML = homeMatches.length ? homeMatches.map(renderMatchCard).join("") : `<div class="empty-state">${t("noResults")}</div>`;
+  const today = yemenToday();
+  const homeMatches = sortMatches(state.data.games.filter((match) => match.date === today));
+  byId("liveMatchesList").innerHTML = homeMatches.length
+    ? homeMatches.map((match) => renderMatchCard(match, { showCountdown: true })).join("")
+    : `<div class="empty-state">${t("noResults")}</div>`;
+  updateMatchCountdowns();
   byId("popularChannels").innerHTML = state.data.channels.length ? state.data.channels.slice(0, 3).map(renderChannelCard).join("") : `<div class="empty-state">${t("noResults")}</div>`;
+}
+
+function formatRemainingTime(milliseconds) {
+  if (milliseconds <= 0) return "بدأت المباراة";
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `متبقي ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function updateMatchCountdowns() {
+  document.querySelectorAll("[data-match-countdown]").forEach((element) => {
+    const kickoff = Number(element.dataset.kickoff);
+    if (!Number.isFinite(kickoff)) return;
+    const remaining = kickoff - Date.now();
+    element.textContent = formatRemainingTime(remaining);
+    element.classList.toggle("started", remaining <= 0);
+  });
 }
 
 function startCountdownTicker() {
   clearInterval(countdownTimer);
+  updateMatchCountdowns();
   countdownTimer = setInterval(() => {
-    if (document.querySelector("#homeView.active") || Date.now() >= WORLD_CUP_START.getTime()) {
+    updateMatchCountdowns();
+    if (Date.now() < WORLD_CUP_START.getTime() && document.querySelector("#homeView.active")) {
       renderFeaturedHome();
     }
-    if (Date.now() >= WORLD_CUP_START.getTime()) clearInterval(countdownTimer);
   }, 1000);
 }
 
@@ -168,7 +228,7 @@ async function loadData() {
   state.data = {
     games: games.data,
     teams: teams.data,
-    groups: groups.data,
+    groups: buildStandingsGroups(games.data, teams.data, groups.data),
     stadiums: stadiums.data,
     channels: channels.data,
     channelCategories: channels.categories || []

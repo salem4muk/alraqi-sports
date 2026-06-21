@@ -1,8 +1,9 @@
-import { t } from "./i18n.js?v=next-21";
+import { t } from "./i18n.js?v=next-22";
 
 let currentItem = null;
 let currentServer = null;
 let hlsInstance = null;
+let mpegtsInstance = null;
 
 const sheet = () => document.getElementById("playerSheet");
 const video = () => document.getElementById("videoPlayer");
@@ -16,6 +17,13 @@ function destroyHls() {
     hlsInstance.destroy();
     hlsInstance = null;
   }
+  if (mpegtsInstance) {
+    mpegtsInstance.pause();
+    mpegtsInstance.unload();
+    mpegtsInstance.detachMediaElement();
+    mpegtsInstance.destroy();
+    mpegtsInstance = null;
+  }
 }
 
 function getServers(item) {
@@ -27,6 +35,12 @@ function loadSource(server) {
   destroyHls();
   const player = video();
   const streamUrl = server.url;
+  const streamType = String(server.type || "").toLowerCase();
+  const isHls = streamType === "m3u8" || streamType === "hls" || streamUrl?.includes(".m3u8");
+  const isDirectTs =
+    streamType === "mpegts" ||
+    streamType === "ts" ||
+    (!streamUrl?.includes(".m3u8") && /\/\d+(?:\?.*)?$/.test(streamUrl || ""));
   currentServer = server;
   state().textContent = t("loading");
   meta().textContent = `${server.name} · ${server.quality || ""}`;
@@ -36,7 +50,34 @@ function loadSource(server) {
     return;
   }
 
-  if (streamUrl.includes(".m3u8") && window.Hls?.isSupported()) {
+  if (streamType === "external") {
+    state().textContent = "Opening external stream";
+    window.open(streamUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  if (isDirectTs && window.mpegts?.getFeatureList?.().mseLivePlayback) {
+    mpegtsInstance = window.mpegts.createPlayer(
+      {
+        type: "mpegts",
+        isLive: true,
+        url: streamUrl
+      },
+      {
+        enableWorker: true,
+        liveBufferLatencyChasing: true
+      }
+    );
+    mpegtsInstance.attachMediaElement(player);
+    mpegtsInstance.load();
+    player.onloadedmetadata = () => {
+      state().textContent = t("ready");
+      mpegtsInstance?.play().catch(() => {});
+    };
+    mpegtsInstance.on(window.mpegts.Events.ERROR, () => {
+      state().textContent = "Stream error";
+    });
+  } else if (isHls && window.Hls?.isSupported()) {
     hlsInstance = new window.Hls({ enableWorker: true, lowLatencyMode: true });
     hlsInstance.loadSource(streamUrl);
     hlsInstance.attachMedia(player);

@@ -1,10 +1,27 @@
-import { t } from "./i18n.js?v=next-21";
+import { t } from "./i18n.js?v=next-22";
 
 export const statusLabels = {
   upcoming: "upcoming",
   live: "live",
   finished: "finished"
 };
+
+export function matchTimestamp(match = {}) {
+  const utcTimestamp = Date.parse(match.utcDate || "");
+  if (Number.isFinite(utcTimestamp)) return utcTimestamp;
+
+  const localTimestamp = Date.parse(`${match.date || ""}T${match.time || "00:00"}:00`);
+  return Number.isFinite(localTimestamp) ? localTimestamp : Number.POSITIVE_INFINITY;
+}
+
+export function sortMatches(matches = [], direction = "asc") {
+  const multiplier = direction === "desc" ? -1 : 1;
+  return [...matches].sort((a, b) => {
+    const difference = matchTimestamp(a) - matchTimestamp(b);
+    if (Number.isFinite(difference) && difference !== 0) return difference * multiplier;
+    return String(a.id || "").localeCompare(String(b.id || ""), "en", { numeric: true }) * multiplier;
+  });
+}
 
 export function formatTime12(time = "") {
   const [hourText, minuteText = "00"] = String(time).split(":");
@@ -17,13 +34,14 @@ export function formatTime12(time = "") {
 
 export function formatScore(match) {
   if (match.status === "upcoming" || match.homeScore == null || match.awayScore == null) return formatTime12(match.time);
-  return `${match.homeScore} - ${match.awayScore}`;
+  return `${match.awayScore} - ${match.homeScore}`;
 }
 
 function matchResult(match) {
   const homeScore = Number.isFinite(Number(match.homeScore)) ? Number(match.homeScore) : 0;
   const awayScore = Number.isFinite(Number(match.awayScore)) ? Number(match.awayScore) : 0;
-  return `${homeScore} - ${awayScore}`;
+  // Cards are RTL: home team is on the right and away team is on the left.
+  return `${awayScore} - ${homeScore}`;
 }
 
 function flagContent(value, label) {
@@ -51,6 +69,18 @@ function stageLabel(match) {
   if (matchday) return `دور المجموعات - الجولة ${matchday}`;
   if (String(match.stage || "").toLowerCase().includes("group")) return "دور المجموعات";
   return match.stage || "كأس العالم";
+}
+
+function heroStageLabel(match) {
+  const stage = String(match.stage || "");
+  const group = String(match.group || stage.match(/Group\s+([A-Z0-9]+)/i)?.[1] || "").trim();
+  const matchday = stage.match(/Matchday\s+(\d+)/i)?.[1];
+  const parts = [];
+
+  if (group) parts.push(`المجموعة ${group}`);
+  if (matchday) parts.push(`الجولة ${matchday}`);
+
+  return parts.length ? parts.join(" · ") : stageLabel(match);
 }
 
 function formatDateHeader(date = "") {
@@ -129,7 +159,7 @@ export function renderMatchHero(match) {
     <article class="match-hero">
       <div class="hero-head">
         ${liveBadge}
-        <span class="stage-name">${match.stage} · ${match.stadium}</span>
+        <span class="stage-name">${heroStageLabel(match)} · ${match.stadium}</span>
       </div>
       <div class="versus">
         <div class="team-side">
@@ -151,8 +181,13 @@ export function renderMatchHero(match) {
   `;
 }
 
-export function renderMatchCard(match) {
+export function renderMatchCard(match, { showCountdown = false } = {}) {
   const canWatch = match.status === "live" && match.hasWatchLinks;
+  const kickoff = matchTimestamp(match);
+  const countdown =
+    showCountdown && match.status === "upcoming" && Number.isFinite(kickoff)
+      ? `<div class="match-countdown" data-match-countdown data-kickoff="${kickoff}">متبقي</div>`
+      : "";
   return `
     <article class="match-card fixture-card">
       <div class="match-card-head">
@@ -172,6 +207,7 @@ export function renderMatchCard(match) {
           <small>${match.awayCode}</small>
         </div>
         <div class="match-card-score">${match.status === "upcoming" ? formatTime12(match.time) : matchResult(match)}</div>
+        ${countdown}
       </div>
       <div class="match-card-footer">
         <span>${match.date} · ${formatTime12(match.time)}</span>
@@ -191,8 +227,8 @@ export function createMatchFilters(active = "all") {
 }
 
 export function filterMatches(matches, active) {
-  if (active === "all") return matches;
-  return matches.filter((match) => match.status === active);
+  const filtered = active === "all" ? matches : matches.filter((match) => match.status === active);
+  return sortMatches(filtered, active === "finished" ? "desc" : "asc");
 }
 
 

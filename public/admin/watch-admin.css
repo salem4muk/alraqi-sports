@@ -501,6 +501,28 @@ label span {
   padding-left: 4px;
 }
 
+.match-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.match-filter-button {
+  min-height: 38px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #0b1220;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.match-filter-button.active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 84%);
+  color: var(--text);
+}
+
 .match-choice {
   align-items: center;
   background: #0b1220;

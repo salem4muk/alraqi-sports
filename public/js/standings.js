@@ -1,4 +1,4 @@
-import { t } from "./i18n.js?v=next-21";
+import { t } from "./i18n.js?v=next-22";
 
 export function renderStandings(groups) {
   return groups
@@ -43,7 +43,6 @@ export function renderStadiumCard(stadium) {
     ? `<img src="${stadium.image}" alt="${stadium.name}" loading="lazy" onerror="this.closest('.stadium-image').classList.add('image-error'); this.remove();" />`
     : `<svg viewBox="0 0 24 24"><path d="M4 12c0-4 4-7 8-7s8 3 8 7-4 7-8 7-8-3-8-7Z" /><path d="M4 12h16" /><path d="M8 8h8" /></svg>`;
   const meta = [stadium.city, stadium.country].filter(Boolean).join(", ");
-  const details = [meta, Number(stadium.capacity).toLocaleString()].filter(Boolean).join(" - ");
   const secondary = [stadium.officialName, stadium.region].filter(Boolean).join(" - ");
 
   return `
@@ -52,7 +51,7 @@ export function renderStadiumCard(stadium) {
         ${media}
       </div>
       <strong>${stadium.name}</strong>
-      <small class="muted">${details}</small>
+      <small class="muted">${meta}</small>
       <span class="stadium-meta">${secondary}</span>
     </article>
   `;

@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>لوحة روابط المشاهدة - Alraqi Sports</title>
-    <link rel="stylesheet" href="/admin/watch-admin.css?v=7" />
-    <script type="module" src="/admin/watch-admin.js?v=7"></script>
+    <link rel="stylesheet" href="/admin/watch-admin.css?v=8" />
+    <script type="module" src="/admin/watch-admin.js?v=11"></script>
   </head>
   <body>
     <main class="admin-shell">
@@ -80,8 +80,8 @@
             <section class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>ربط مباراة برابط مشاهدة</h2>
-                  <p>ابحث عن مباراة من API الحالي، ثم أضف رابط بث خاص بها.</p>
+                  <h2>ربط مباراة بقناة أو رابط مشاهدة</h2>
+                  <p>اختر قناة محفوظة لاستخدام روابطها مباشرة، أو أدخل رابط بث خارجي.</p>
                 </div>
               </div>
 
@@ -90,21 +90,23 @@
                   <span>المباراة</span>
                   <input id="matchSearch" type="search" autocomplete="off" placeholder="ابحث باسم الفريق أو التاريخ..." />
                   <input id="matchSelect" type="hidden" required />
+                  <div class="match-filter-row" id="matchFilters" aria-label="فلترة المباريات"></div>
                   <small class="match-count" id="matchCount">حمّل البيانات لعرض المباريات</small>
                   <div class="match-picker-list" id="matchPickerList"></div>
                   <small class="selected-match" id="selectedMatch">اختر مباراة من القائمة</small>
                 </label>
                 <label>
                   <span>العنوان</span>
-                  <input id="matchLinkTitle" type="text" placeholder="البث الرئيسي" required />
+                  <input id="matchLinkTitle" type="text" placeholder="اختياري - يُستخدم اسم القناة تلقائيًا" />
                 </label>
                 <label>
-                  <span>الرابط</span>
-                  <input id="matchLinkUrl" type="url" placeholder="https://example.com/live.m3u8" required />
-                </label>
-                <label>
-                  <span>القناة</span>
+                  <span>قناة موجودة</span>
                   <select id="matchLinkChannel"></select>
+                </label>
+                <label>
+                  <span>أو رابط خارجي</span>
+                  <input id="matchLinkUrl" type="url" placeholder="https://example.com/live.m3u8" />
+                  <small>اتركه فارغًا عند اختيار قناة موجودة.</small>
                 </label>
                 <div class="inline-fields">
                   <label>
@@ -124,7 +126,7 @@
                     <input id="matchLinkLanguage" type="text" value="ar" />
                   </label>
                 </div>
-                <button class="primary" type="submit">إضافة رابط للمباراة</button>
+                <button class="primary" type="submit">إضافة وحفظ خيار المشاهدة</button>
               </form>
             </section>
 
